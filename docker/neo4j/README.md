@@ -1,3 +1,4 @@
+![img](./screen-neo4j.png)
 
 # Getting Started
 

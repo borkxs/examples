@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>hello</title>
+  <style type="text/css">
+    html {
+      height: 100%;
+    }
+    body {
+      height: 100%;
+      box-sizing: border-box;
+      margin: 0;
+      display: flex;
+      flex-flow: column;
+    }
+    .error {
+      background: rgba(255, 0, 0, 0.3);
+      color: rgba(255, 0, 0, 0.8);
+      border-color: rgba(255, 0, 0, 0.8);
+    }
+    #input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 50px 10px;
+      outline: none;
+      box-sizing: border-box;
+      font-size: 40px;
+      border-width: 0;
+      border-bottom: 1px solid #aaa;
+    }
+    #viz {
+      padding: 50px 50px 50px 0;
+      flex-grow: 1;
+      display: flex;
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <input id="input" type="text" placeholder="a*b" value="a" />
+  </div>
+  <div id="viz"></div>
+  <script type="text/javascript" src="build/client.js"></script>
+</body>
+</html>
