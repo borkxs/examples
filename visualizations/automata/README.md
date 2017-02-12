@@ -27,11 +27,13 @@ npm start
 
 Pattern: `a`
 
-![img](./output/a.svg)
+![img](https://raw.githubusercontent.com/borkxs/examples/master/visualizations/automata/output/a.svg)
+<!-- ![img](./output/a.svg) -->
 
 Pattern: `a|b`
 
-![img](./output/a_or_b.svg)
+![img](https://raw.githubusercontent.com/borkxs/examples/master/visualizations/automata/output/a_or_b.svg)
+<!-- ![img](./output/a_or_b.svg) -->
 
 # Also
 

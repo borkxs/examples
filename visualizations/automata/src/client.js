@@ -1,6 +1,5 @@
-var worker = new Worker("build/worker.js")
-var el = document.getElementById("viz")
-var throttle = require("lodash").throttle
+const worker = new Worker("build/worker.js")
+const el = document.getElementById("viz")
 
 // listen to worker
 worker.onmessage = function(evt) {
@@ -15,20 +14,22 @@ worker.onmessage = function(evt) {
 }
 
 // initial value
-worker.postMessage(["a"])
+worker.postMessage(["abc"])
 
 // render graph
 function onGraph({ svg }) {
   if (el) {
-    el.innerHTML = svg
+    requestAnimationFrame(() => {
+      el.innerHTML = svg
+    })
   }
 }
 
-var input = document.getElementById("input")
-if (input) {
-  input.addEventListener("keyup", throttle(e => {
+const input = document.getElementById("input")
+const handleInput = e => {
     worker.postMessage([input.value])
-    // onGraph({ svg: svg(input.value) })
-  }, 500))
+  }
+if (input) {
+  input.addEventListener("keyup", handleInput)
   input.focus()
 }

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack",
+    "dev": "npm start & nodemon --exec npm run build",
     "start": "webpack-dev-server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -13,12 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "automata.js": "^0.2.1",
-    "live-server": "^1.2.0",
     "lodash": "^4.17.4",
     "viz.js": "^1.7.0"
   },
   "devDependencies": {
-    "concurrently": "^3.2.0",
     "nodemon": "^1.11.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.3.0"
