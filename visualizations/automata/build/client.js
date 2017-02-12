@@ -87,7 +87,7 @@ worker.onmessage = function(evt) {
 }
 
 // initial value
-worker.postMessage(["abc"])
+worker.postMessage(["ab(c|d)ef"])
 
 // render graph
 function onGraph({ svg }) {
