@@ -12,7 +12,7 @@ self.onmessage = function (evt) {
 
 function svg(pattern) {
   var parser = new (regParser.RegParser)(pattern)
-  var nfa = parser.parseToNFA()
-  return Viz(nfa.toDotScript(), "svg", "dot")
+  var dfa = parser.parseToDFA()
+  return Viz(dfa.toDotScript(), "svg", "dot")
 }
 
