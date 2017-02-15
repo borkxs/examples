@@ -1,0 +1,13 @@
+<!--
+Merge the source alpha version with the original graphic
+
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+-->
+<feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+<feMerge>
+  <feMergeNode/>
+  <feMergeNode in="SourceGraphic"/>
+</feMerge>

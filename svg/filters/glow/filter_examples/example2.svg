@@ -1,0 +1,2 @@
+<!-- add in="SourceAlpha" -->
+<feGaussianBlur in="SourceAlpha" stdDeviation="5"/>

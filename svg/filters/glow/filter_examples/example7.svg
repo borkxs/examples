@@ -1,0 +1,10 @@
+<!--
+So now we add the merge back
+-->
+<feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur"/>
+<feFlood flood-color="rgba(255, 0, 0, 1)" />
+<feComposite in2="offsetblur" operator="in" />
+<feMerge>
+  <feMergeNode/>
+  <feMergeNode in="SourceGraphic"/>
+</feMerge>

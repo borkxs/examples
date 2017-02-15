@@ -1,0 +1,13 @@
+<!--
+And finally we add offsets
+
+    <feOffset dx="10" dy="10" result="offsetblur"/>
+-->
+<feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+<feOffset dx="10" dy="10" result="offsetblur"/>
+<feFlood flood-color="rgba(255, 0, 0, 1)" />
+<feComposite in2="offsetblur" operator="in" />
+<feMerge>
+  <feMergeNode/>
+  <feMergeNode in="SourceGraphic"/>
+</feMerge>

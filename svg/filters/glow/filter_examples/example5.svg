@@ -1,0 +1,9 @@
+<!--
+So let's try flooding!
+
+    <feFlood flood-color="red" />
+
+Hmm, it appears flooding by defaults floods into a giant rectangle
+-->
+<feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+<feFlood flood-color="red" />
