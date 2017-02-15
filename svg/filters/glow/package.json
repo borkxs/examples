@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "nodemon -w public/ -w build.js -e svg --exec node build.js"
+  },
+  "devDependencies": {
+    "nodemon": "1.10.2"
+  }
+}

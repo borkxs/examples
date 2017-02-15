@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+</head>
+<body>
+<div style="display: flex;">
+    <div><!-- <feGaussianBlur stdDeviation="5"/> -->
+<svg>
+  <filter id="blurMe1">
+    <feGaussianBlur stdDeviation="5"/>
+  </filter>
+
+  <g filter="url(#blurMe1)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>&lt;feGaussianBlur stdDeviation&#x3D;&quot;5&quot;&#x2F;&gt;</pre>
+  </div>
+<div style="display: flex;">
+    <div><!-- add in="SourceAlpha" -->
+<svg>
+  <filter id="blurMe2">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+  </filter>
+
+  <g filter="url(#blurMe2)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>add in&#x3D;&quot;SourceAlpha&quot;</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+Merge the source alpha version with the original graphic
+
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+-->
+<svg>
+  <filter id="blurMe2">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <g filter="url(#blurMe2)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>Merge the source alpha version with the original graphic
+
+    &lt;feMerge&gt;
+      &lt;feMergeNode&#x2F;&gt;
+      &lt;feMergeNode in&#x3D;&quot;SourceGraphic&quot;&#x2F;&gt;
+    &lt;&#x2F;feMerge&gt;</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+Or merge with a regular blur
+
+This one is all nice and blurred, but it doesn't quite implement the dropshadow
+interface
+-->
+<svg>
+  <filter id="blurMe3">
+    <feGaussianBlur stdDeviation="5"/>
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <g filter="url(#blurMe3)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>Or merge with a regular blur
+
+This one is all nice and blurred, but it doesn&#39;t quite implement the dropshadow
+interface</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+So let's try flooding!
+
+    <feFlood flood-color="red" />
+
+Hmm, it appears flooding by defaults floods into a giant rectangle
+-->
+<svg>
+  <filter id="blurMe4">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+    <feFlood flood-color="red" />
+  </filter>
+
+  <g filter="url(#blurMe4)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>So let&#39;s try flooding!
+
+    &lt;feFlood flood-color&#x3D;&quot;red&quot; &#x2F;&gt;
+
+Hmm, it appears flooding by defaults floods into a giant rectangle</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+We need to composite the flood and blur, so we give the blur a result name to reference later
+
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur" />
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+
+-->
+<svg>
+  <filter id="blurMe4">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur" />
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+  </filter>
+
+  <g filter="url(#blurMe4)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>We need to composite the flood and blur, so we give the blur a result name to reference later
+
+    &lt;feGaussianBlur in&#x3D;&quot;SourceAlpha&quot; stdDeviation&#x3D;&quot;6&quot; result&#x3D;&quot;offsetblur&quot; &#x2F;&gt;
+    &lt;feFlood flood-color&#x3D;&quot;rgba(255, 0, 0, 1)&quot; &#x2F;&gt;
+    &lt;feComposite in2&#x3D;&quot;offsetblur&quot; operator&#x3D;&quot;in&quot; &#x2F;&gt;</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+So now we add the merge back
+-->
+<svg>
+  <filter id="blurMe5">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur"/>
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <g filter="url(#blurMe5)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>So now we add the merge back</pre>
+  </div>
+<div style="display: flex;">
+    <div><!--
+And finally we add offsets
+
+    <feOffset dx="10" dy="10" result="offsetblur"/>
+-->
+<svg>
+  <filter id="blurMe6">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+    <feOffset dx="10" dy="10" result="offsetblur"/>
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <g filter="url(#blurMe6)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
+</div>
+    <pre>And finally we add offsets
+
+    &lt;feOffset dx&#x3D;&quot;10&quot; dy&#x3D;&quot;10&quot; result&#x3D;&quot;offsetblur&quot;&#x2F;&gt;</pre>
+  </div>
+</body>
+</html>

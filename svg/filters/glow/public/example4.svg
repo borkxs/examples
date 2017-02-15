@@ -1,0 +1,21 @@
+<!--
+Or merge with a regular blur
+
+This one is all nice and blurred, but it doesn't quite implement the dropshadow
+interface
+-->
+<svg>
+  <filter id="blurMe3">
+    <feGaussianBlur stdDeviation="5"/>
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <g filter="url(#blurMe3)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>

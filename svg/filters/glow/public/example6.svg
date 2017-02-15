@@ -1,0 +1,21 @@
+<!--
+We need to composite the flood and blur, so we give the blur a result name to reference later
+
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur" />
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+
+-->
+<svg>
+  <filter id="blurMe4">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur" />
+    <feFlood flood-color="rgba(255, 0, 0, 1)" />
+    <feComposite in2="offsetblur" operator="in" />
+  </filter>
+
+  <g filter="url(#blurMe4)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>

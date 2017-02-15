@@ -1,0 +1,19 @@
+<!--
+So let's try flooding!
+
+    <feFlood flood-color="red" />
+
+Hmm, it appears flooding by defaults floods into a giant rectangle
+-->
+<svg>
+  <filter id="blurMe4">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+    <feFlood flood-color="red" />
+  </filter>
+
+  <g filter="url(#blurMe4)">
+    <circle cx="60"  cy="60" r="50" fill="green" />
+    <circle cx="120"  cy="60" r="50" fill="yellow" />
+    <circle cx="170" cy="60" r="50" fill="red" />
+  </g>
+</svg>
