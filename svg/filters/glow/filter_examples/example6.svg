@@ -5,6 +5,9 @@ We need to composite the flood and blur, so we give the blur a result name to re
     <feFlood flood-color="rgba(255, 0, 0, 1)" />
     <feComposite in2="offsetblur" operator="in" />
 
+In Photoshop-y terms, this is like we're creating a layer, and adding a layer
+mask of the alpha gaussian blur.
+
 -->
 <feGaussianBlur stdDeviation="6" result="offsetblur" />
 <feFlood flood-color="rgba(255, 0, 0, 1)" />

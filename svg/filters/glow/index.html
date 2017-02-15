@@ -140,6 +140,9 @@ We need to composite the flood and blur, so we give the blur a result name to re
     <feFlood flood-color="rgba(255, 0, 0, 1)" />
     <feComposite in2="offsetblur" operator="in" />
 
+In Photoshop-y terms, this is like we're creating a layer, and adding a layer
+mask of the alpha gaussian blur.
+
 -->
 <feGaussianBlur stdDeviation="6" result="offsetblur" />
 <feFlood flood-color="rgba(255, 0, 0, 1)" />
@@ -157,12 +160,41 @@ We need to composite the flood and blur, so we give the blur a result name to re
 
     &lt;feGaussianBlur in&#x3D;&quot;SourceAlpha&quot; stdDeviation&#x3D;&quot;6&quot; result&#x3D;&quot;offsetblur&quot; &#x2F;&gt;
     &lt;feFlood flood-color&#x3D;&quot;rgba(255, 0, 0, 1)&quot; &#x2F;&gt;
-    &lt;feComposite in2&#x3D;&quot;offsetblur&quot; operator&#x3D;&quot;in&quot; &#x2F;&gt;</pre>
+    &lt;feComposite in2&#x3D;&quot;offsetblur&quot; operator&#x3D;&quot;in&quot; &#x2F;&gt;
+
+In Photoshop-y terms, this is like we&#39;re creating a layer, and adding a layer
+mask of the alpha gaussian blur.</pre>
   </div>
 <div style="display: flex;">
     <div>
       <svg>
     <filter id="blur-me-6">
+      <!--
+By using a different operator prop on composite we see better what it is for
+
+    <feComposite in2="SourceGraphic" operator="out" />
+
+-->
+<feGaussianBlur stdDeviation="6" result="offsetblur" />
+<feFlood flood-color="rgba(255, 0, 0, 1)" />
+<feComposite in2="offsetblur" operator="out" />
+
+    </filter>
+    <g filter="url(#blur-me-6)">
+      <circle cx="60"  cy="60" r="50" fill="green"></circle>
+      <circle cx="120"  cy="60" r="50" fill="yellow"></circle>
+      <circle cx="170" cy="60" r="50" fill="red"></circle>
+    </g>
+  </svg>
+    </div>
+    <pre>By using a different operator prop on composite we see better what it is for
+
+    &lt;feComposite in2&#x3D;&quot;SourceGraphic&quot; operator&#x3D;&quot;out&quot; &#x2F;&gt;</pre>
+  </div>
+<div style="display: flex;">
+    <div>
+      <svg>
+    <filter id="blur-me-7">
       <!--
 So now we add the merge back
 -->
@@ -175,7 +207,7 @@ So now we add the merge back
 </feMerge>
 
     </filter>
-    <g filter="url(#blur-me-6)">
+    <g filter="url(#blur-me-7)">
       <circle cx="60"  cy="60" r="50" fill="green"></circle>
       <circle cx="120"  cy="60" r="50" fill="yellow"></circle>
       <circle cx="170" cy="60" r="50" fill="red"></circle>
@@ -187,7 +219,7 @@ So now we add the merge back
 <div style="display: flex;">
     <div>
       <svg>
-    <filter id="blur-me-7">
+    <filter id="blur-me-8">
       <!--
 And finally we add offsets
 
@@ -203,7 +235,7 @@ And finally we add offsets
 </feMerge>
 
     </filter>
-    <g filter="url(#blur-me-7)">
+    <g filter="url(#blur-me-8)">
       <circle cx="60"  cy="60" r="50" fill="green"></circle>
       <circle cx="120"  cy="60" r="50" fill="yellow"></circle>
       <circle cx="170" cy="60" r="50" fill="red"></circle>

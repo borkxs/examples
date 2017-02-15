@@ -1,10 +1,9 @@
 <!--
-So now we add the merge back
+By using a different operator prop on composite we see better what it is for
+
+    <feComposite in2="SourceGraphic" operator="out" />
+
 -->
-<feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur"/>
+<feGaussianBlur stdDeviation="6" result="offsetblur" />
 <feFlood flood-color="rgba(255, 0, 0, 1)" />
-<feComposite in2="offsetblur" operator="in" />
-<feMerge>
-  <feMergeNode/>
-  <feMergeNode in="SourceGraphic"/>
-</feMerge>
+<feComposite in2="offsetblur" operator="out" />

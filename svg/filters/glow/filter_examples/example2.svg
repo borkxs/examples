@@ -1,2 +1,2 @@
 <!-- add in="SourceAlpha" -->
-<feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+<feGaussianBlur in="SourceAlpha" stdDeviation="<%= radius %>"/>
