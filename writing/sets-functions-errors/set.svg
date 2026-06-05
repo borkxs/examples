@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 960 720" role="img" aria-labelledby="title desc">
+  <title id="title">Set mapping diagram</title>
+  <desc id="desc">A function maps x1 and x4 to y1, x2 to y2, and x3 to y4. z4 is outside the domain and is shown as an error.</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5b9bd5"/>
+    </marker>
+    <marker id="arrow-black" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111"/>
+    </marker>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-color="#000" flood-opacity="0.14"/>
+    </filter>
+  </defs>
+
+  <rect width="960" height="720" fill="#fff"/>
+
+  <text x="480" y="45" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#111">This is what a function looks like.</text>
+  <line x1="480" y1="75" x2="480" y2="165" stroke="#111" stroke-width="8" marker-end="url(#arrow-black)"/>
+
+  <text x="135" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" fill="#000">X</text>
+  <text x="755" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" fill="#000">Y</text>
+
+  <ellipse cx="135" cy="405" rx="88" ry="285" fill="none" stroke="#000" stroke-width="5" filter="url(#soft-shadow)"/>
+  <ellipse cx="755" cy="405" rx="88" ry="285" fill="none" stroke="#000" stroke-width="5" filter="url(#soft-shadow)"/>
+
+  <g font-family="Arial, sans-serif" font-size="30" fill="#000">
+    <text x="95" y="265">x1</text>
+    <text x="95" y="385">x2</text>
+    <text x="95" y="505">x3</text>
+    <text x="95" y="625">x4</text>
+    <text x="790" y="278">y1</text>
+    <text x="790" y="398">y2</text>
+    <text x="790" y="458">y3</text>
+    <text x="790" y="518">y4</text>
+    <text x="790" y="638">y5</text>
+  </g>
+
+  <g fill="#000">
+    <circle cx="150" cy="255" r="8"/>
+    <circle cx="150" cy="375" r="8"/>
+    <circle cx="150" cy="495" r="8"/>
+    <circle cx="150" cy="615" r="8"/>
+    <circle cx="760" cy="260" r="8"/>
+    <circle cx="760" cy="380" r="8"/>
+    <circle cx="760" cy="440" r="8"/>
+    <circle cx="760" cy="500" r="8"/>
+    <circle cx="760" cy="620" r="8"/>
+  </g>
+
+  <g fill="none" stroke="#5b9bd5" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow-blue)" filter="url(#soft-shadow)">
+    <path d="M 158 254 C 310 255, 575 263, 750 260"/>
+    <path d="M 158 374 C 325 372, 570 383, 750 380"/>
+    <path d="M 158 494 C 350 512, 565 480, 750 500"/>
+    <path d="M 158 614 C 340 530, 575 370, 750 260"/>
+  </g>
+
+  <circle cx="130" cy="660" r="47" fill="#fff" stroke="#f00" stroke-width="5" filter="url(#soft-shadow)"/>
+  <text x="130" y="670" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" fill="#111">z4</text>
+  <line x1="370" y1="660" x2="230" y2="660" stroke="#111" stroke-width="8" marker-end="url(#arrow-black)"/>
+  <text x="405" y="670" font-family="Arial, sans-serif" font-size="28" fill="#111">This is what an error looks like.</text>
+</svg>

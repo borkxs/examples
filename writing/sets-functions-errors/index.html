@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sets, Functions, and Errors</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --ink: #172033;
+      --muted: #5d6678;
+      --paper: #ffffff;
+      --rail: #edf1f7;
+      --mark: #fff1a8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.12), transparent 34rem),
+        linear-gradient(180deg, #f8fbff 0%, #ffffff 24rem);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.62;
+    }
+
+    main {
+      width: min(100% - 2rem, 72rem);
+      margin: 0 auto;
+      padding: 3rem 0 5rem;
+    }
+
+    article {
+      display: grid;
+      gap: 2rem;
+    }
+
+    header,
+    section,
+    .callout,
+    .media-pair {
+      width: min(100%, 44rem);
+      margin: 0 auto;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 0.75rem;
+      font-size: clamp(2.5rem, 7vw, 4.75rem);
+      line-height: 0.95;
+      letter-spacing: -0.07em;
+    }
+
+    h2 {
+      margin-bottom: 0.75rem;
+      padding-top: 1rem;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: -0.035em;
+    }
+
+    h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    p,
+    li {
+      font-size: 1.075rem;
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    code,
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    }
+
+    code {
+      padding: 0.1rem 0.3rem;
+      border-radius: 0.3rem;
+      background: var(--rail);
+      font-size: 0.92em;
+    }
+
+    pre {
+      overflow-x: auto;
+      margin: 0.75rem 0;
+      padding: 0.8rem 1rem;
+      border: 1px solid #dbe3ee;
+      border-radius: 0.8rem;
+      background: #f8fafc;
+      color: #263241;
+      font-size: 0.98rem;
+      line-height: 1.45;
+    }
+
+    mark {
+      padding: 0.05rem 0.22rem;
+      border-radius: 0.25rem;
+      background: var(--mark);
+      color: inherit;
+    }
+
+    .dek {
+      max-width: 38rem;
+      color: var(--muted);
+      font-size: 1.25rem;
+    }
+
+    .contrast {
+      display: grid;
+      gap: 0.75rem;
+      margin: 1.5rem 0 0;
+    }
+
+    .contrast p {
+      margin: 0;
+      padding: 1rem 1.1rem;
+      border-left: 0.35rem solid #cbd5e1;
+      border-radius: 0.75rem;
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .contrast p:last-child {
+      border-left-color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    .callout {
+      padding: 1.1rem 1.25rem;
+      border: 1px solid #bfd2f7;
+      border-radius: 1rem;
+      background: rgba(219, 234, 254, 0.72);
+    }
+
+    .callout p:last-child,
+    section p:last-child,
+    section ul:last-child {
+      margin-bottom: 0;
+    }
+
+    .media-pair {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+      gap: 1rem;
+      width: min(100%, 72rem);
+      align-items: stretch;
+    }
+
+    figure {
+      display: grid;
+      align-content: start;
+      gap: 0.65rem;
+      margin: 0;
+      padding: 0.85rem;
+      border: 1px solid #dce5f2;
+      border-radius: 1rem;
+      background: var(--paper);
+      box-shadow: 0 1.25rem 3rem rgba(23, 32, 51, 0.08);
+    }
+
+    figure img {
+      width: 100%;
+      height: auto;
+      border-radius: 0.6rem;
+    }
+
+    figcaption {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .formula {
+      display: grid;
+      gap: 0.4rem;
+      margin: 1rem 0;
+    }
+
+    .formula pre {
+      margin: 0;
+    }
+
+    .rule-list {
+      padding-left: 1.25rem;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 1rem, 72rem);
+        padding-top: 1.25rem;
+      }
+
+      .media-pair {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <h1>Sets, Functions, and Errors</h1>
+        <p class="dek">A type is a promise about which values belong. An error is what happens when the world hands you a value outside the promise.</p>
+
+        <div class="contrast" aria-label="Misconception and correction">
+          <p>Misconception: we do not want our code to <em>error</em>.</p>
+          <p>Truth: we do not want our code to have <em>bugs</em>.</p>
+        </div>
+      </header>
+
+      <section aria-labelledby="errors-are-friends">
+        <h2 id="errors-are-friends">An error is not a bug. An error is your friend.</h2>
+        <p>An error is what you report when you receive an input that is not a member of the set of all possible, allowable, or known inputs.</p>
+        <p>An error is something you report early, loudly, and with as much context as possible.</p>
+        <p><strong><em>Being trigger-happy with your errors makes finding bugs easier.</em></strong></p>
+      </section>
+
+      <section aria-labelledby="sets-and-functions">
+        <h2 id="sets-and-functions">Sets and functions in TypeScript</h2>
+        <p>A function is a <strong>mapping</strong> between two <strong>sets</strong>.</p>
+        <p>There is an <strong>input</strong> set and an <strong>output</strong> set.</p>
+        <ul class="rule-list">
+          <li>The <strong>domain</strong> is the input set.</li>
+          <li>The <strong>codomain</strong> is the output set.</li>
+          <li>The <strong>range</strong> is the subset of the output set actually used by the mapping.</li>
+        </ul>
+
+        <p>In the following example:</p>
+        <div class="formula" aria-label="Domain, codomain, and range">
+          <pre>Domain:   X = {x1, x2, x3, x4}</pre>
+          <pre>Codomain: Y = {y1, y2, y3, y4, y5}</pre>
+          <pre>Range:    {y1, y2, y4}</pre>
+        </div>
+      </section>
+
+      <div class="media-pair" aria-label="Set mapping and matching TypeScript">
+        <figure>
+          <img src="set.svg" alt="A mapping from set X to set Y. x1 and x4 map to y1, x2 maps to y2, x3 maps to y4, and z4 is outside the domain.">
+          <figcaption>The function maps every member of X to one member of Y. The value z4 is not in X, so it is outside the domain.</figcaption>
+        </figure>
+        <figure>
+          <img src="set-code.svg" alt="TypeScript enums X and Y with a function that maps X values to Y values and throws on an unknown input.">
+          <figcaption>The codomain is <code>Y</code>, but the range is the smaller set of values actually returned.</figcaption>
+        </figure>
+      </div>
+
+      <section aria-labelledby="errors">
+        <h2 id="errors">Errors</h2>
+        <p>If our function receives an unknown input like <code>z4</code>, we <strong>do not</strong> want to pretend we know what it is and assign an arbitrary value.</p>
+        <p>Anything not in the set <code>X</code> should be treated as an error.</p>
+        <p>This matters most at trust boundaries: user input, network responses, persisted data, query strings, environment variables, and anything else the TypeScript compiler cannot inspect.</p>
+        <p><mark>TypeScript can enforce that every declared output of our function is in the codomain, but it does not enforce the range.</mark></p>
+        <p>By reporting an error, we alert ourselves to possible bugs or misuses of the system. By reporting an error, we clarify exactly what exists in our domain, codomain, and range.</p>
+      </section>
+
+      <section aria-labelledby="range-and-codomain">
+        <h2 id="range-and-codomain">Range and codomain</h2>
+        <p>The distinction between range and codomain is subtle but important. The range is always a subset of the codomain. The codomain can include items not in the range, but not vice versa.</p>
+        <p>TypeScript usually cares about the codomain. It has no built-in way to express every useful range restriction.</p>
+        <p>For instance, you can write a function that returns type <code>number</code>, but not one that returns only numbers in the interval <code>[0, 200]</code> unless you enforce it manually.</p>
+        <p><mark>This is the essence of what an error <em>is</em>: a clear report that some value is outside the set your program promised to handle.</mark></p>
+      </section>
+
+      <section aria-labelledby="continuous-example">
+        <h2 id="continuous-example">What about a continuous example?</h2>
+        <div class="formula" aria-label="Continuous domain, codomain, and range">
+          <pre>Runtime domain: finite numbers</pre>
+          <pre>Codomain:       numbers</pre>
+          <pre>Expected range: [0, 200]</pre>
+        </div>
+
+        <p>The following function can return a value for a finite float or integer, but throws an error when the input is not finite.</p>
+        <p>Notice the shape of the guard: it protects the domain first. If the output interval matters too, that is a second invariant worth checking explicitly.</p>
+      </section>
+
+      <div class="media-pair" aria-label="Plot and matching JavaScript">
+        <figure>
+          <img src="plot.svg" alt="A plot with random values for x less than -200, an absolute value V shape between -200 and 200, and a sine wave for x greater than 200.">
+          <figcaption>The picture makes three cases visible: random-looking values, an absolute-value valley, and an oscillating sine wave.</figcaption>
+        </figure>
+        <figure>
+          <img src="plot-code.svg" alt="JavaScript plot function that throws if x is not finite, returns a random value below -200, Math.abs(x) below 200, and 100 times sine plus 100 otherwise.">
+          <figcaption>The first line is the boundary check. Everything after it assumes the input is inside the domain.</figcaption>
+        </figure>
+      </div>
+
+      <aside class="callout" aria-label="Takeaway">
+        <h2>Takeaway</h2>
+        <p>Errors are not a failure to be avoided. They are executable explanations of your program's boundaries.</p>
+      </aside>
+    </article>
+  </main>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-labelledby="title desc">
+  <title id="title">Piecewise plot</title>
+  <desc id="desc">A graph showing random-looking values from x equals -500 to -200, an absolute-value V from -200 to 200, and a sine wave from 200 to 500.</desc>
+  <defs>
+    <clipPath id="plot-area">
+      <rect x="58" y="24" width="860" height="462"/>
+    </clipPath>
+    <style>
+      .axis { stroke: #111; stroke-width: 1.5; }
+      .tick { stroke: #111; stroke-width: 1.2; }
+      .label { fill: #111; font-family: Arial, sans-serif; font-size: 13px; }
+      .line { fill: none; stroke: #2682cf; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    </style>
+  </defs>
+
+  <rect width="960" height="540" fill="#fff"/>
+
+  <g>
+    <line class="axis" x1="58" y1="24" x2="58" y2="486"/>
+    <line class="axis" x1="58" y1="486" x2="918" y2="486"/>
+
+    <g class="label" text-anchor="end">
+      <text x="48" y="490">0</text>
+      <text x="48" y="444">20</text>
+      <text x="48" y="398">40</text>
+      <text x="48" y="351">60</text>
+      <text x="48" y="305">80</text>
+      <text x="48" y="259">100</text>
+      <text x="48" y="213">120</text>
+      <text x="48" y="167">140</text>
+      <text x="48" y="121">160</text>
+      <text x="48" y="75">180</text>
+      <text x="48" y="29">200</text>
+    </g>
+
+    <g>
+      <line class="tick" x1="58" y1="486" x2="58" y2="493"/>
+      <line class="tick" x1="144" y1="486" x2="144" y2="493"/>
+      <line class="tick" x1="230" y1="486" x2="230" y2="493"/>
+      <line class="tick" x1="316" y1="486" x2="316" y2="493"/>
+      <line class="tick" x1="402" y1="486" x2="402" y2="493"/>
+      <line class="tick" x1="488" y1="486" x2="488" y2="493"/>
+      <line class="tick" x1="574" y1="486" x2="574" y2="493"/>
+      <line class="tick" x1="660" y1="486" x2="660" y2="493"/>
+      <line class="tick" x1="746" y1="486" x2="746" y2="493"/>
+      <line class="tick" x1="832" y1="486" x2="832" y2="493"/>
+      <line class="tick" x1="918" y1="486" x2="918" y2="493"/>
+    </g>
+
+    <g class="label" text-anchor="middle">
+      <text x="58" y="512">-500</text>
+      <text x="144" y="512">-400</text>
+      <text x="230" y="512">-300</text>
+      <text x="316" y="512">-200</text>
+      <text x="402" y="512">-100</text>
+      <text x="488" y="512">0</text>
+      <text x="574" y="512">100</text>
+      <text x="660" y="512">200</text>
+      <text x="746" y="512">300</text>
+      <text x="832" y="512">400</text>
+      <text x="918" y="512">500</text>
+    </g>
+  </g>
+
+  <g clip-path="url(#plot-area)">
+    <polyline class="line" points="
+      58,284 62,326 66,250 70,356 74,298 78,237 82,421 86,302 90,370 94,224
+      98,309 102,286 106,392 110,262 114,340 118,198 122,332 126,401 130,276 134,226
+      138,313 142,357 146,258 150,417 154,311 158,242 162,370 166,291 170,213 174,384
+      178,324 182,274 186,430 190,300 194,244 198,342 202,222 206,368 210,286 214,412
+      218,251 222,309 226,227 230,386 234,294 238,350 242,210 246,330 250,265 254,403
+      258,287 262,236 266,345 270,427 274,308 278,252 282,376 286,221 290,339 294,293
+      298,415 302,270 306,248 310,354 314,236 316,250
+    "/>
+
+    <polyline class="line" points="316,24 488,486 660,24"/>
+
+    <path class="line" d="
+      M 660 255
+      C 666 80, 678 80, 684 255
+      S 702 430, 708 255
+      S 726 80, 732 255
+      S 750 430, 756 255
+      S 774 80, 780 255
+      S 798 430, 804 255
+      S 822 80, 828 255
+      S 846 430, 852 255
+      S 870 80, 876 255
+      S 894 430, 900 255
+      S 918 430, 918 255
+    "/>
+  </g>
+</svg>
