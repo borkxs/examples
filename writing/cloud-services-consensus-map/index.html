@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cloud Services Consensus Map</title>
+  <link rel="stylesheet" href="../writing.css">
+  <style>
+    .map-shell {
+      width: min(100%, 72rem);
+      margin: 0 auto;
+    }
+
+    .map-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .map-label {
+      margin-bottom: 0.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .map-count {
+      color: var(--muted);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+
+    .map-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .map-pill {
+      padding: 0.42rem 0.8rem;
+      border: 1px solid #cfd8e3;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--ink);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 650;
+      line-height: 1;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+
+    .map-pill:hover,
+    .map-pill.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: #174ea6;
+    }
+
+    .map-reset {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .map-vendor {
+      margin-bottom: 1.5rem;
+    }
+
+    .map-vendor-header {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.25rem 0 0.7rem;
+    }
+
+    .map-vendor-dot {
+      width: 0.55rem;
+      height: 0.55rem;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .map-vendor-label {
+      color: var(--ink);
+      font-size: 0.92rem;
+      font-weight: 800;
+    }
+
+    .map-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr));
+      gap: 0.75rem;
+    }
+
+    .service-card {
+      display: grid;
+      gap: 0.55rem;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: 0.85rem;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0.75rem 2rem rgba(23, 32, 51, 0.06);
+    }
+
+    .service-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .service-name {
+      color: var(--ink);
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .service-vendor {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 650;
+    }
+
+    .service-desc {
+      color: #344054;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .cat-badge {
+      padding: 0.18rem 0.55rem;
+      border-radius: 999px;
+      flex-shrink: 0;
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.3;
+      white-space: nowrap;
+    }
+
+    .tech-row,
+    .paper-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .tech-chip {
+      padding: 0.18rem 0.5rem;
+      border: 1px solid #d7ddd2;
+      border-radius: 0.3rem;
+      background: #f3f4ef;
+      color: #30352c;
+      font-size: 0.78rem;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .paper-link {
+      color: #185fa5;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.35;
+      text-decoration: none;
+    }
+
+    .paper-link:hover {
+      text-decoration: underline;
+    }
+
+    .map-empty {
+      padding: 2rem;
+      border: 1px solid var(--line);
+      border-radius: 1rem;
+      background: var(--paper);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <a class="backlink" href="../">Back to writing</a>
+        <p class="eyebrow">Distributed systems</p>
+        <h1>Cloud Services Consensus Map</h1>
+        <p class="dek">A filterable map of cloud services, the distributed-systems ideas they resemble or publicly cite, and the papers worth reading next.</p>
+      </header>
+
+      <section>
+        <h2>The point</h2>
+        <p>Cloud product pages describe managed databases, queues, storage, and edge runtimes as separate categories. Underneath, many of them rhyme: replicated logs, quorum writes, leader election, metadata stores, clocks, anti-entropy, and conflict resolution.</p>
+        <p>This map is a reading guide, not an audit of private implementations. Treat each card as a pointer from a product shape to the research vocabulary that helps explain it.</p>
+      </section>
+
+      <section class="map-shell" aria-labelledby="map-title">
+        <h2 id="map-title" class="sr-only">Cloud services map showing consensus algorithms and research papers behind managed cloud services</h2>
+
+        <div class="map-toolbar">
+          <div class="map-label">Filter by category</div>
+          <span class="map-count" id="count"></span>
+        </div>
+        <div class="map-filters" id="filters"></div>
+
+        <div class="map-toolbar">
+          <div class="map-label">Filter by tech</div>
+          <button class="map-reset" type="button" id="reset">Clear filters</button>
+        </div>
+        <div class="map-filters" id="tech-filters"></div>
+
+        <div id="output"></div>
+      </section>
+
+      <aside class="callout">
+        <h2>Takeaway</h2>
+        <p>Distributed systems papers are not trivia. They are compression: once you know the primitive, a whole family of cloud services becomes easier to reason about.</p>
+      </aside>
+    </article>
+  </main>
+
+  <script>
+    const VENDORS = {
+      aws: { label: "AWS", color: "#E8971A" },
+      gcp: { label: "Google Cloud", color: "#185FA5" },
+      azure: { label: "Azure", color: "#0078D4" },
+      cf: { label: "Cloudflare", color: "#F38020" },
+      atlas: { label: "MongoDB Atlas", color: "#00684A" },
+      cockroach: { label: "CockroachDB", color: "#6933FF" },
+      neon: { label: "Neon", color: "#12A594" },
+      planetscale: { label: "PlanetScale", color: "#000" },
+      vercel: { label: "Vercel", color: "#000" },
+      stripe: { label: "Stripe", color: "#635BFF" },
+      tidb: { label: "TiDB Cloud", color: "#ED3B3B" }
+    };
+
+    const PAPERS = {
+      paxos: { name: "Paxos Made Simple", url: "https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" },
+      multi_paxos: { name: "Multi-Paxos / Chubby", url: "https://research.google/pubs/the-chubby-lock-service-for-loosely-coupled-distributed-systems/" },
+      raft: { name: "Raft", url: "https://raft.github.io/raft.pdf" },
+      dynamo: { name: "Dynamo (Amazon)", url: "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf" },
+      spanner: { name: "Spanner", url: "https://research.google/pubs/spanner-googles-globally-distributed-database-2/" },
+      bigtable: { name: "Bigtable", url: "https://research.google/pubs/bigtable-a-distributed-storage-system-for-structured-data/" },
+      gfs: { name: "GFS", url: "https://research.google/pubs/the-google-file-system/" },
+      f1: { name: "F1", url: "https://research.google/pubs/f1-a-distributed-sql-database-that-scales/" },
+      aurora: { name: "Aurora (Amazon)", url: "https://www.allthingsdistributed.com/files/p1041-verbitski.pdf" },
+      calvin: { name: "Calvin", url: "http://cs.yale.edu/homes/thomson/publications/calvin-sigmod12.pdf" },
+      driveby: { name: "Percolator", url: "https://research.google/pubs/large-scale-incremental-processing-using-distributed-transactions-and-notifications/" },
+      pbft: { name: "PBFT", url: "https://pmg.csail.mit.edu/papers/osdi99.pdf" },
+      zookeeper: { name: "ZooKeeper / ZAB", url: "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf" },
+      gossip: { name: "Gossip/SWIM", url: "https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf" },
+      vector_clocks: { name: "Vector Clocks", url: "https://lamport.azurewebsites.net/pubs/time-clocks.pdf" },
+      crdt: { name: "CRDTs", url: "https://hal.inria.fr/inria-00555588/document" },
+      chord: { name: "Chord DHT", url: "https://pdos.csail.mit.edu/papers/chord:sigcomm01/chord_sigcomm.pdf" },
+      masstree: { name: "Masstree", url: "https://pdos.csail.mit.edu/papers/masstree:eurosys12.pdf" },
+      lsm: { name: "LSM-Tree", url: "https://www.cs.umb.edu/~poneil/lsmtree.pdf" },
+      two_pl: { name: "Two-Phase Locking", url: "https://dl.acm.org/doi/10.1145/320071.320076" },
+      mvcc: { name: "MVCC", url: "https://www.cs.berkeley.edu/~brewer/cs262/concurrency-distributed-databases.pdf" },
+      tcc: { name: "TrueTime / TCC", url: "https://research.google/pubs/spanner-googles-globally-distributed-database-2/" },
+      tangaroa: { name: "Tangaroa (BFT Raft)", url: "https://www.scs.stanford.edu/14au-cs244b/labs/projects/copeland_zhong.pdf" }
+    };
+
+    const SERVICES = [
+      { v: "aws", name: "DynamoDB", cat: "database", desc: "Managed NoSQL key-value and document DB at any scale", tech: ["dynamo", "vector_clocks", "mvcc", "gossip"], papers: ["dynamo", "vector_clocks"] },
+      { v: "aws", name: "Aurora", cat: "database", desc: "MySQL/Postgres-compatible relational DB with storage-compute separation", tech: ["aurora", "raft", "mvcc"], papers: ["aurora", "raft"] },
+      { v: "aws", name: "S3", cat: "storage", desc: "Object storage; internally uses Paxos for metadata consistency", tech: ["paxos", "dynamo"], papers: ["paxos", "dynamo"] },
+      { v: "aws", name: "ElastiCache (Redis)", cat: "database", desc: "Managed Redis with cluster replication", tech: ["raft", "gossip"], papers: ["raft", "gossip"] },
+      { v: "aws", name: "RDS", cat: "database", desc: "Managed relational DB (Postgres, MySQL, etc.) with Multi-AZ", tech: ["raft", "mvcc"], papers: ["raft"] },
+      { v: "aws", name: "Route 53", cat: "networking", desc: "DNS and health routing; uses Paxos for zone consistency", tech: ["paxos"], papers: ["paxos"] },
+      { v: "aws", name: "Kinesis", cat: "streaming", desc: "Real-time data streaming; partitioned log, at-least-once delivery", tech: ["dynamo", "vector_clocks"], papers: ["dynamo"] },
+      { v: "aws", name: "SQS", cat: "messaging", desc: "Managed message queue; eventual consistency via Dynamo-style replication", tech: ["dynamo", "paxos"], papers: ["dynamo"] },
+      { v: "aws", name: "ECS / EKS", cat: "compute", desc: "Container orchestration; etcd (Raft) as control plane backend", tech: ["raft"], papers: ["raft"] },
+      { v: "aws", name: "EFS", cat: "storage", desc: "Elastic NFS; metadata via Paxos-based coordination", tech: ["paxos"], papers: ["paxos"] },
+      { v: "aws", name: "CloudFront", cat: "networking", desc: "CDN; Anycast routing and real-time config replication", tech: ["gossip", "paxos"], papers: ["gossip"] },
+
+      { v: "gcp", name: "Spanner", cat: "database", desc: "Globally distributed, strongly consistent SQL DB using TrueTime", tech: ["spanner", "paxos", "tcc", "two_pl", "mvcc"], papers: ["spanner", "paxos", "tcc"] },
+      { v: "gcp", name: "Bigtable", cat: "database", desc: "Wide-column NoSQL; GFS + SSTable + Chubby for coordination", tech: ["bigtable", "paxos", "multi_paxos", "gfs", "lsm"], papers: ["bigtable", "multi_paxos", "gfs"] },
+      { v: "gcp", name: "Firestore", cat: "database", desc: "Document DB built on Spanner commit timestamps and Paxos", tech: ["spanner", "paxos", "mvcc"], papers: ["spanner", "paxos"] },
+      { v: "gcp", name: "GCS", cat: "storage", desc: "Object storage; Colossus (successor to GFS) with Paxos metadata", tech: ["gfs", "paxos"], papers: ["gfs", "paxos"] },
+      { v: "gcp", name: "Pub/Sub", cat: "streaming", desc: "Managed streaming; strong ordering per partition via Paxos", tech: ["paxos", "gossip"], papers: ["paxos"] },
+      { v: "gcp", name: "GKE", cat: "compute", desc: "Managed Kubernetes; etcd (Raft) as the cluster store", tech: ["raft"], papers: ["raft"] },
+      { v: "gcp", name: "AlloyDB", cat: "database", desc: "Postgres-compatible with columnar engine; Paxos HA replication", tech: ["paxos", "mvcc", "raft"], papers: ["paxos", "raft"] },
+      { v: "gcp", name: "Cloud DNS", cat: "networking", desc: "Managed DNS; Spanner-backed for zone data consistency", tech: ["spanner", "paxos"], papers: ["spanner"] },
+
+      { v: "azure", name: "Cosmos DB", cat: "database", desc: "Multi-model globally distributed DB; five consistency levels, Paxos quorum", tech: ["paxos", "multi_paxos", "mvcc", "vector_clocks"], papers: ["paxos", "vector_clocks"] },
+      { v: "azure", name: "Azure SQL", cat: "database", desc: "Managed SQL Server; Always On uses Paxos-based replication groups", tech: ["paxos", "mvcc"], papers: ["paxos"] },
+      { v: "azure", name: "AKS", cat: "compute", desc: "Managed Kubernetes; etcd (Raft) control plane", tech: ["raft"], papers: ["raft"] },
+      { v: "azure", name: "Event Hubs", cat: "streaming", desc: "Kafka-compatible streaming; partition leader election via ZAB", tech: ["zookeeper"], papers: ["zookeeper"] },
+      { v: "azure", name: "Blob Storage", cat: "storage", desc: "Object storage; metadata Paxos quorum for strong consistency", tech: ["paxos"], papers: ["paxos"] },
+      { v: "azure", name: "Service Bus", cat: "messaging", desc: "Enterprise messaging; sessions and ordering via Paxos quorum", tech: ["paxos"], papers: ["paxos"] },
+
+      { v: "cf", name: "Workers KV", cat: "database", desc: "Globally replicated key-value; eventual consistency with CRDTs", tech: ["crdt", "gossip"], papers: ["crdt", "gossip"] },
+      { v: "cf", name: "Durable Objects", cat: "compute", desc: "Stateful edge compute with strong consistency via Raft", tech: ["raft"], papers: ["raft"] },
+      { v: "cf", name: "D1", cat: "database", desc: "Edge SQLite replicated globally using Raft for log replication", tech: ["raft", "mvcc"], papers: ["raft"] },
+      { v: "cf", name: "R2", cat: "storage", desc: "S3-compatible object storage; consistent metadata via Raft", tech: ["raft", "paxos"], papers: ["raft"] },
+      { v: "cf", name: "Queues", cat: "messaging", desc: "Pull-based message queue; at-least-once delivery with Raft WAL", tech: ["raft"], papers: ["raft"] },
+      { v: "cf", name: "DNS", cat: "networking", desc: "Authoritative DNS; Anycast and gossip propagation", tech: ["gossip"], papers: ["gossip"] },
+
+      { v: "cockroach", name: "CockroachDB Cloud", cat: "database", desc: "Distributed Postgres-compatible; Raft per range (key partition)", tech: ["raft", "mvcc", "two_pl"], papers: ["raft", "mvcc"] },
+      { v: "atlas", name: "MongoDB Atlas", cat: "database", desc: "Managed MongoDB; Raft-based replica set elections", tech: ["raft", "gossip", "mvcc"], papers: ["raft", "gossip"] },
+      { v: "neon", name: "Neon Postgres", cat: "database", desc: "Serverless Postgres with storage-compute separation; Paxos for Safekeeper WAL quorum", tech: ["paxos", "raft", "mvcc"], papers: ["paxos", "raft"] },
+      { v: "planetscale", name: "PlanetScale", cat: "database", desc: "MySQL-compatible powered by Vitess; Raft for shard leadership", tech: ["raft", "two_pl", "mvcc"], papers: ["raft"] },
+      { v: "tidb", name: "TiDB Cloud", cat: "database", desc: "HTAP: TiKV (Raft) for row storage, TiFlash columnar replica", tech: ["raft", "mvcc", "two_pl"], papers: ["raft", "mvcc"] },
+      { v: "stripe", name: "Stripe Radar / Sigma", cat: "analytics", desc: "Real-time fraud and analytics; internal ledger uses Paxos log", tech: ["paxos", "mvcc"], papers: ["paxos"] },
+      { v: "vercel", name: "KV / Edge Config", cat: "database", desc: "Edge key-value (Upstash Redis); Raft cluster replication", tech: ["raft", "crdt"], papers: ["raft", "crdt"] }
+    ];
+
+    const CAT_COLORS = {
+      analytics: "#3B6D11",
+      compute: "#854F0B",
+      database: "#185FA5",
+      messaging: "#993556",
+      networking: "#993C1D",
+      storage: "#0F6E56",
+      streaming: "#534AB7"
+    };
+
+    const CAT_BG = {
+      analytics: "#EAF3DE",
+      compute: "#FAEEDA",
+      database: "#E6F1FB",
+      messaging: "#FBEAF0",
+      networking: "#FAECE7",
+      storage: "#E1F5EE",
+      streaming: "#EEEDFE"
+    };
+
+    const CATS = [...new Set(SERVICES.map(service => service.cat))].sort();
+    const TECHS = [...new Set(SERVICES.flatMap(service => service.tech))].sort();
+
+    const activeCats = new Set();
+    const activeTechs = new Set();
+
+    function labelTech(tech) {
+      return tech.replace(/_/g, " ");
+    }
+
+    function cardHTML(service) {
+      const paperLinks = service.papers.slice(0, 2).map(paperKey => {
+        const paper = PAPERS[paperKey];
+        return `<a class="paper-link" href="${paper.url}" target="_blank" rel="noopener">[paper] ${paper.name}</a>`;
+      }).join("");
+
+      const techChips = service.tech.map(tech => `<span class="tech-chip">${labelTech(tech)}</span>`).join("");
+
+      return `<div class="service-card">
+        <div class="service-card-top">
+          <div>
+            <div class="service-name">${service.name}</div>
+            <div class="service-vendor">${VENDORS[service.v].label}</div>
+          </div>
+          <span class="cat-badge" style="background:${CAT_BG[service.cat] || "#f0f0f0"};color:${CAT_COLORS[service.cat] || "#333"}">${service.cat}</span>
+        </div>
+        <div class="service-desc">${service.desc}</div>
+        <div class="tech-row">${techChips}</div>
+        <div class="paper-row">${paperLinks}</div>
+      </div>`;
+    }
+
+    function render() {
+      const output = document.getElementById("output");
+      const filtered = SERVICES.filter(service => {
+        if (activeCats.size && !activeCats.has(service.cat)) return false;
+        if (activeTechs.size && !service.tech.some(tech => activeTechs.has(tech))) return false;
+        return true;
+      });
+
+      document.getElementById("count").textContent = `${filtered.length} service${filtered.length === 1 ? "" : "s"}`;
+
+      if (!filtered.length) {
+        output.innerHTML = '<div class="map-empty">No services match. Try clearing some filters.</div>';
+        return;
+      }
+
+      const byVendor = {};
+      filtered.forEach(service => {
+        (byVendor[service.v] || (byVendor[service.v] = [])).push(service);
+      });
+
+      output.innerHTML = Object.keys(VENDORS).filter(vendorKey => byVendor[vendorKey]).map(vendorKey => {
+        const vendor = VENDORS[vendorKey];
+        const services = byVendor[vendorKey];
+        return `<div class="map-vendor">
+          <div class="map-vendor-header">
+            <div class="map-vendor-dot" style="background:${vendor.color}"></div>
+            <div class="map-vendor-label">${vendor.label}</div>
+            <span class="map-count">${services.length} service${services.length === 1 ? "" : "s"}</span>
+          </div>
+          <div class="map-grid">${services.map(cardHTML).join("")}</div>
+        </div>`;
+      }).join("");
+    }
+
+    function buildFilterButtons(containerId, values, activeSet, dataName) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = values.map(value => `<button class="map-pill" type="button" data-${dataName}="${value}">${labelTech(value)}</button>`).join("");
+      container.querySelectorAll("button").forEach(button => {
+        button.addEventListener("click", () => {
+          const value = button.dataset[dataName];
+          if (activeSet.has(value)) {
+            activeSet.delete(value);
+            button.classList.remove("active");
+          } else {
+            activeSet.add(value);
+            button.classList.add("active");
+          }
+          render();
+        });
+      });
+    }
+
+    function resetFilters() {
+      activeCats.clear();
+      activeTechs.clear();
+      document.querySelectorAll(".map-pill.active").forEach(button => button.classList.remove("active"));
+      render();
+    }
+
+    buildFilterButtons("filters", CATS, activeCats, "cat");
+    buildFilterButtons("tech-filters", TECHS, activeTechs, "tech");
+    document.getElementById("reset").addEventListener("click", resetFilters);
+    render();
+  </script>
+</body>
+</html>

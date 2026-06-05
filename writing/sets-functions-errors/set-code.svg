@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="980" viewBox="0 0 760 980" role="img" aria-labelledby="title desc">
+  <title id="title">TypeScript enum mapping code</title>
+  <desc id="desc">TypeScript code declaring enum X, enum Y, and a function foo that maps values of X to values of Y and throws an error for unknown input.</desc>
+  <defs>
+    <style>
+      .bg { fill: #1f1f1f; }
+      .num { fill: #858585; }
+      .kw { fill: #569cd6; }
+      .type { fill: #4ec9b0; }
+      .id { fill: #dcdcaa; }
+      .op { fill: #d4d4d4; }
+      .str { fill: #ce9178; }
+      .comment { fill: #6a9955; }
+      .punct { fill: #d4d4d4; }
+      .text { fill: #d4d4d4; }
+      text { font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace; font-size: 24px; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="760" height="980" rx="18"/>
+  <g transform="translate(24 42)">
+    <g text-anchor="end" class="num">
+      <text x="22" y="0">1</text>
+      <text x="22" y="34">2</text>
+      <text x="22" y="68">3</text>
+      <text x="22" y="102">4</text>
+      <text x="22" y="136">5</text>
+      <text x="22" y="170">6</text>
+      <text x="22" y="204">7</text>
+      <text x="22" y="238">8</text>
+      <text x="22" y="272">9</text>
+      <text x="22" y="306">10</text>
+      <text x="22" y="340">11</text>
+      <text x="22" y="374">12</text>
+      <text x="22" y="408">13</text>
+      <text x="22" y="442">14</text>
+      <text x="22" y="476">15</text>
+      <text x="22" y="510">16</text>
+      <text x="22" y="544">17</text>
+      <text x="22" y="578">18</text>
+      <text x="22" y="612">19</text>
+      <text x="22" y="646">20</text>
+      <text x="22" y="680">21</text>
+      <text x="22" y="714">22</text>
+      <text x="22" y="748">23</text>
+      <text x="22" y="782">24</text>
+      <text x="22" y="816">25</text>
+      <text x="22" y="850">26</text>
+      <text x="22" y="884">27</text>
+      <text x="22" y="918">28</text>
+      <text x="22" y="952">29</text>
+    </g>
+
+    <g transform="translate(58 0)">
+      <line x1="0" y1="10" x2="0" y2="150" stroke="#3a3a3a"/>
+      <line x1="0" y1="248" x2="0" y2="422" stroke="#3a3a3a"/>
+      <line x1="0" y1="520" x2="0" y2="874" stroke="#3a3a3a"/>
+      <line x1="34" y1="520" x2="34" y2="874" stroke="#3a3a3a"/>
+
+      <text x="0" y="0"><tspan class="kw">enum</tspan><tspan class="op"> </tspan><tspan class="type">X</tspan><tspan class="op"> {</tspan></text>
+      <text x="28" y="34"><tspan class="id">x1</tspan><tspan class="op"> = </tspan><tspan class="str">'x1'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="68"><tspan class="id">x2</tspan><tspan class="op"> = </tspan><tspan class="str">'x2'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="102"><tspan class="id">x3</tspan><tspan class="op"> = </tspan><tspan class="str">'x3'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="136"><tspan class="id">x4</tspan><tspan class="op"> = </tspan><tspan class="str">'x4'</tspan></text>
+      <text x="0" y="170"><tspan class="op">}</tspan></text>
+
+      <text x="0" y="238"><tspan class="kw">enum</tspan><tspan class="op"> </tspan><tspan class="type">Y</tspan><tspan class="op"> {</tspan></text>
+      <text x="28" y="272"><tspan class="id">y1</tspan><tspan class="op"> = </tspan><tspan class="str">'y1'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="306"><tspan class="id">y2</tspan><tspan class="op"> = </tspan><tspan class="str">'y2'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="340"><tspan class="id">y3</tspan><tspan class="op"> = </tspan><tspan class="str">'y3'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="374"><tspan class="id">y4</tspan><tspan class="op"> = </tspan><tspan class="str">'y4'</tspan><tspan class="punct">,</tspan></text>
+      <text x="28" y="408"><tspan class="id">y5</tspan><tspan class="op"> = </tspan><tspan class="str">'y5'</tspan></text>
+      <text x="0" y="442"><tspan class="op">}</tspan></text>
+
+      <text x="0" y="510"><tspan class="kw">function</tspan><tspan class="op"> </tspan><tspan class="id">foo</tspan><tspan class="op">(</tspan><tspan class="text">input</tspan><tspan class="op">: </tspan><tspan class="type">X</tspan><tspan class="op">): </tspan><tspan class="type">Y</tspan><tspan class="op"> {</tspan></text>
+      <text x="28" y="544"><tspan class="kw">switch</tspan><tspan class="op"> (</tspan><tspan class="text">input</tspan><tspan class="op">) {</tspan></text>
+      <text x="64" y="578"><tspan class="kw">case</tspan><tspan class="op"> </tspan><tspan class="type">X</tspan><tspan class="punct">.</tspan><tspan class="id">x1</tspan><tspan class="punct">:</tspan></text>
+      <text x="64" y="612"><tspan class="kw">case</tspan><tspan class="op"> </tspan><tspan class="type">X</tspan><tspan class="punct">.</tspan><tspan class="id">x4</tspan><tspan class="punct">:</tspan><tspan class="op"> </tspan><tspan class="kw">return</tspan><tspan class="op"> </tspan><tspan class="type">Y</tspan><tspan class="punct">.</tspan><tspan class="id">y1</tspan><tspan class="punct">;</tspan></text>
+      <text x="64" y="646"><tspan class="kw">case</tspan><tspan class="op"> </tspan><tspan class="type">X</tspan><tspan class="punct">.</tspan><tspan class="id">x2</tspan><tspan class="punct">:</tspan><tspan class="op"> </tspan><tspan class="kw">return</tspan><tspan class="op"> </tspan><tspan class="type">Y</tspan><tspan class="punct">.</tspan><tspan class="id">y2</tspan><tspan class="punct">;</tspan></text>
+      <text x="198" y="680"><tspan class="comment">// Y.y3</tspan></text>
+      <text x="64" y="714"><tspan class="kw">case</tspan><tspan class="op"> </tspan><tspan class="type">X</tspan><tspan class="punct">.</tspan><tspan class="id">x3</tspan><tspan class="punct">:</tspan><tspan class="op"> </tspan><tspan class="kw">return</tspan><tspan class="op"> </tspan><tspan class="type">Y</tspan><tspan class="punct">.</tspan><tspan class="id">y4</tspan><tspan class="punct">;</tspan></text>
+      <text x="198" y="748"><tspan class="comment">// Y.y5</tspan></text>
+      <text x="64" y="782"><tspan class="kw">default</tspan><tspan class="punct">:</tspan></text>
+      <text x="100" y="816"><tspan class="kw">throw</tspan><tspan class="op"> </tspan><tspan class="kw">new</tspan><tspan class="op"> </tspan><tspan class="type">Error</tspan><tspan class="punct">(</tspan></text>
+      <text x="136" y="850"><tspan class="str">`Input ${input} is not known.`</tspan></text>
+      <text x="100" y="884"><tspan class="punct">);</tspan></text>
+      <text x="28" y="918"><tspan class="op">}</tspan></text>
+      <text x="0" y="952"><tspan class="op">}</tspan></text>
+    </g>
+  </g>
+</svg>
