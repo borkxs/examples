@@ -1,0 +1,11 @@
+title: Examples
+
+# GitHub Pages builds this repo with Jekyll when publishing from the branch.
+# Keep the runnable experiments in git, but leave the public site focused on
+# the writing section.
+exclude:
+  - create-react-app
+  - docker
+  - node
+  - svg
+  - visualizations

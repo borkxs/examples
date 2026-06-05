@@ -1,18 +1,8 @@
 # Examples
 
-```
-$ tree -L 2 -I node_modules
-.
-├── docker
-│   └── neo4j
-└── visualizations
-    └── automata
-└── svg
-    └── filters
-        └── glow
-```
+The GitHub Pages site for this repo is focused on the writing section:
 
-* [docker/neo4j](docker/neo4j)
-* [visualizations/automata](visualizations/automata)
-* [svg/filters](svg/filters/glow)
 * [writing](writing)
+
+Older runnable examples are still kept in the repo as source material and
+historical context, but they are excluded from the published Pages build.
