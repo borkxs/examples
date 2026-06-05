@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pathgather: Charts</title>
+  <link rel="stylesheet" href="../writing.css">
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <a class="backlink" href="../">Back to writing</a>
+        <p class="eyebrow">SVG charts</p>
+        <h1>Pathgather: Charts</h1>
+        <p class="dek">A small charting detail became a useful lesson: sometimes the cleanest way to preserve a design is to compose SVG layers directly.</p>
+      </header>
+
+      <section>
+        <h2>The detail</h2>
+        <p>The design included a semi-transparent dashed blue line. The line was not simply behind a white shape with reduced opacity. It needed to be a real dashed line, masked by the shape of another dataset.</p>
+        <p>That makes the chart a composition problem. One dataset defines the visible region. Another dataset draws the line. The final image comes from layering them in the right order.</p>
+      </section>
+
+      <figure class="wide">
+        <img src="chart-clipping.svg" alt="A chart where a dashed blue line is clipped to the shape of a foreground area dataset.">
+        <figcaption>The dashed line exists as its own layer, but a clip path restricts where that layer is visible.</figcaption>
+      </figure>
+
+      <section>
+        <h2>The SVG move</h2>
+        <p>SVG already has the primitive for this: put a shape inside a <code>clipPath</code>, give that clip path an <code>id</code>, then reference the id from another element.</p>
+        <pre>&lt;clipPath id="foreground-area"&gt;
+  &lt;path d="...the foreground area shape..."/&gt;
+&lt;/clipPath&gt;
+
+&lt;path
+  d="...the dashed background line..."
+  clip-path="url(#foreground-area)"
+  stroke-dasharray="8 8"
+/&gt;</pre>
+        <p>The important idea is not the exact chart library. The important idea is that SVG lets one layer use another layer as a mask.</p>
+      </section>
+
+      <section>
+        <h2>The library move</h2>
+        <p>The production component was built on top of an existing React charting library. The final chart took two datasets as input and composed several rendered layers.</p>
+        <p>The interesting part was that the library did not explicitly expose every SVG attribute. So the job became: trace where props flow, find an object that gets spread onto the final SVG element, and pass <code>clipPath</code> through that opening.</p>
+        <pre>&lt;VictoryArea
+  data={foreground}
+  dataComponent={
+    &lt;clipPath id={clipPathId}&gt;
+      &lt;Area {...props}/&gt;
+    &lt;/clipPath&gt;
+  }
+/&gt;
+
+&lt;VictoryLine
+  data={background}
+  dataComponent={
+    &lt;Area events={{ clipPath: `url(#${clipPathId})` }}/&gt;
+  }
+/&gt;</pre>
+        <p>That is a little hacky, but in a useful way: understand the abstraction well enough to route the underlying platform feature through it.</p>
+      </section>
+
+      <section>
+        <h2>The debugging client</h2>
+        <p>The old <a href="../../create-react-app/hash-base-image/">hash-base-image React app</a> in this repo was a client for debugging a QuickChart-style service: JSON chart input went into the URL, and the service rendered a PNG image from an SVG/React chart.</p>
+        <p>That kind of tool is valuable because image rendering bugs are hard to inspect from the final PNG alone. You want a narrow loop: edit the input, see the generated image, copy the URL, and keep the rendering service honest.</p>
+      </section>
+
+      <aside class="callout">
+        <h2>Takeaway</h2>
+        <p>When a charting library almost gives you what you need, look for the SVG primitive underneath it. The library is the interface; SVG is still the rendering model.</p>
+        <p>This post adapts the original Medium note: <a href="https://medium.com/@insulttogingery/pathgather-charts-83dd08258a8d">Pathgather: Charts</a>.</p>
+      </aside>
+    </article>
+  </main>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SVG Filters: Glow</title>
+  <link rel="stylesheet" href="../writing.css">
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <a class="backlink" href="../">Back to writing</a>
+        <p class="eyebrow">SVG filters</p>
+        <h1>Glow</h1>
+        <p class="dek">A glow is not one operation. It is a tiny image pipeline: blur an alpha mask, color it, clip the color to the blur, then merge the original graphic back on top.</p>
+      </header>
+
+      <section>
+        <h2>The mental model</h2>
+        <p>SVG filters are easier to read if you treat each element as producing an intermediate image. Some filter elements create pixels. Some transform pixels. Some combine pixels. The useful trick is naming the intermediate results.</p>
+        <p>This page keeps the original example's laconic style: each step changes one thing.</p>
+      </section>
+
+      <section class="wide stack" aria-label="Glow filter examples">
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Three blurred circles">
+              <filter id="glow-step-1">
+                <feGaussianBlur stdDeviation="3"/>
+              </filter>
+              <g filter="url(#glow-step-1)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Start with blur. This blurs the whole source graphic, colors and all.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur stdDeviation="3"/&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Blurred alpha mask of three circles">
+              <filter id="glow-step-2">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+              </filter>
+              <g filter="url(#glow-step-2)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Use <code>SourceAlpha</code> when you care about shape, not color.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur in="SourceAlpha" stdDeviation="3"/&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Original circles merged over a blurred alpha mask">
+              <filter id="glow-step-3">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <g filter="url(#glow-step-3)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Merge the blurred mask with the original graphic. Now the sharp source comes back.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur in="SourceAlpha" stdDeviation="5"/&gt;
+&lt;feMerge&gt;
+  &lt;feMergeNode/&gt;
+  &lt;feMergeNode in="SourceGraphic"/&gt;
+&lt;/feMerge&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Original circles merged over a regular colored blur">
+              <filter id="glow-step-4">
+                <feGaussianBlur stdDeviation="5"/>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <g filter="url(#glow-step-4)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>A regular blur is pretty, but it is not yet a colored drop shadow or glow.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur stdDeviation="5"/&gt;
+&lt;feMerge&gt;
+  &lt;feMergeNode/&gt;
+  &lt;feMergeNode in="SourceGraphic"/&gt;
+&lt;/feMerge&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="A red flood rectangle behind three circles">
+              <filter id="glow-step-5">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+                <feFlood flood-color="red"/>
+              </filter>
+              <g filter="url(#glow-step-5)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption><code>feFlood</code> creates color, but by itself it floods the filter region.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur in="SourceAlpha" stdDeviation="6"/&gt;
+&lt;feFlood flood-color="red"/&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="A red shape clipped by a blurred mask">
+              <filter id="glow-step-6">
+                <feGaussianBlur stdDeviation="6" result="offsetblur"/>
+                <feFlood flood-color="rgba(255, 0, 0, 1)"/>
+                <feComposite in2="offsetblur" operator="in"/>
+              </filter>
+              <g filter="url(#glow-step-6)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Name the blur, flood with red, then composite the flood inside the blur.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur stdDeviation="6" result="offsetblur"/&gt;
+&lt;feFlood flood-color="rgba(255, 0, 0, 1)"/&gt;
+&lt;feComposite in2="offsetblur" operator="in"/&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Composite operator out demonstration">
+              <filter id="glow-step-7">
+                <feGaussianBlur stdDeviation="6" result="offsetblur"/>
+                <feFlood flood-color="rgba(255, 0, 0, 1)"/>
+                <feComposite in2="offsetblur" operator="out"/>
+              </filter>
+              <g filter="url(#glow-step-7)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Change the operator and the role of compositing becomes obvious.</figcaption>
+            <pre class="demo-code">&lt;feComposite in2="offsetblur" operator="out"/&gt;</pre>
+          </div>
+        </figure>
+
+        <figure class="demo-row">
+          <div class="demo-stage">
+            <svg viewBox="0 0 240 130" role="img" aria-label="Final red glow behind three circles">
+              <filter id="glow-step-8" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur"/>
+                <feFlood flood-color="rgba(255, 0, 0, 1)"/>
+                <feComposite in2="offsetblur" operator="in"/>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <g filter="url(#glow-step-8)">
+                <circle cx="60" cy="65" r="45" fill="green"/>
+                <circle cx="120" cy="65" r="45" fill="yellow"/>
+                <circle cx="175" cy="65" r="45" fill="red"/>
+              </g>
+            </svg>
+          </div>
+          <div>
+            <figcaption>Put it together: alpha mask, blur, flood, composite, merge.</figcaption>
+            <pre class="demo-code">&lt;feGaussianBlur in="SourceAlpha" stdDeviation="6" result="offsetblur"/&gt;
+&lt;feFlood flood-color="rgba(255, 0, 0, 1)"/&gt;
+&lt;feComposite in2="offsetblur" operator="in"/&gt;
+&lt;feMerge&gt;
+  &lt;feMergeNode/&gt;
+  &lt;feMergeNode in="SourceGraphic"/&gt;
+&lt;/feMerge&gt;</pre>
+          </div>
+        </figure>
+      </section>
+
+      <aside class="callout">
+        <h2>Takeaway</h2>
+        <p>Most useful SVG filters are pipelines. If you can name the intermediate images, you can reason about the filter.</p>
+        <p>The original generated version of this example is still available at <a href="../../svg/filters/glow/">svg/filters/glow/</a>.</p>
+      </aside>
+    </article>
+  </main>
+</body>
+</html>

@@ -125,6 +125,18 @@
       font-size: 1.25rem;
     }
 
+    .backlink {
+      display: inline-flex;
+      margin-bottom: 1.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .backlink:hover {
+      color: var(--accent);
+    }
+
     .contrast {
       display: grid;
       gap: 0.75rem;
@@ -221,6 +233,7 @@
   <main>
     <article>
       <header>
+        <a class="backlink" href="../">Back to writing</a>
         <h1>Sets, Functions, and Errors</h1>
         <p class="dek">A type is a promise about which values belong. An error is what happens when the world hands you a value outside the promise.</p>
 
