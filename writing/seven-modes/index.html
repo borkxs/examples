@@ -230,6 +230,13 @@
       font-weight: 700;
     }
 
+    .mode-title {
+      display: inline-flex;
+      flex-direction: column;
+      line-height: 1.05;
+      vertical-align: middle;
+    }
+
     .mode-aka {
       color: var(--ink-faint);
       font-family: var(--mono);
@@ -725,7 +732,7 @@
         const cells = notes.map((note, di) => `<td>${modeCell(mode, di + 1, note, `nc-${mi}-${di}`)}</td>`).join("");
         const aka = mode.aka ? `<span class="mode-aka">${mode.aka}</span>` : "";
         return `<tr data-mode="${mi}">
-          <td><button class="play-btn" type="button" aria-label="Play ${mode.name} scale" data-play="${mi}">▶</button><span class="mode-name" style="display:inline;">${mode.name}</span>${aka}</td>
+          <td><button class="play-btn" type="button" aria-label="Play ${mode.name} scale" data-play="${mi}">▶</button><span class="mode-title"><span class="mode-name">${mode.name}</span>${aka}</span></td>
           ${cells}
           <td style="color:${soundTextColor(mode.flats)};font-size:0.78rem;font-style:italic;white-space:nowrap;">${mode.sound}</td>
         </tr>`;
