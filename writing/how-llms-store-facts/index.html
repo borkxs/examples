@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How LLMs Store Facts</title>
+  <link rel="stylesheet" href="../writing.css">
+  <style>
+    .interactive {
+      position: relative;
+      margin: 2.5rem auto;
+      padding: 28px;
+      border-radius: 4px;
+      background: var(--ink);
+      color: #e5e7eb;
+    }
+
+    .interactive-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .interactive-label::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .aside {
+      border-left: 2px solid var(--accent);
+      margin: 2rem auto;
+      padding: 0.8rem 1.2rem;
+      background: var(--accent-dim);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .matrix-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table.matrix {
+      border-collapse: collapse;
+      margin: 0 auto;
+      color: #e5e7eb;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+    }
+
+    .matrix th {
+      padding: 4px 8px;
+      color: #6b7280;
+      font-weight: 400;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .matrix th.row-header {
+      padding-right: 12px;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .matrix td {
+      min-width: 54px;
+      padding: 5px 8px;
+      border-radius: 3px;
+      cursor: default;
+      position: relative;
+      text-align: center;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .cell-hot {
+      background: rgba(37, 99, 255, 0.25);
+      color: #93c5fd;
+      font-weight: 600;
+    }
+
+    .cell-cold { color: #374151; }
+    .cell-highlight {
+      background: rgba(37, 99, 255, 0.5) !important;
+      color: #fff !important;
+      font-weight: 600;
+    }
+
+    .cell-warn {
+      background: rgba(220, 38, 38, 0.25);
+      color: #fca5a5;
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 3px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      padding: 10px 20px;
+      text-transform: uppercase;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary {
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+      color: #9ca3af;
+    }
+
+    .loss-display {
+      height: 20px;
+      margin-top: 12px;
+      color: #6b7280;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      transition: color 0.3s;
+    }
+
+    .loss-display.good { color: #86efac; }
+
+    .progress-bar {
+      height: 2px;
+      border-radius: 1px;
+      margin-top: 8px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.1s linear;
+    }
+
+    .query-section { margin-top: 20px; }
+    .query-input-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .query-input-row span {
+      color: #9ca3af;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+    }
+
+    .interactive select {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #e5e7eb;
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 6px 10px;
+    }
+
+    .interactive select:focus {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    .query-result {
+      min-height: 80px;
+      margin-top: 14px;
+      color: #9ca3af;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+    }
+
+    .prob-label {
+      margin-bottom: 10px;
+      color: #6b7280;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .prob-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    .prob-row .word {
+      width: 76px;
+      color: #9ca3af;
+      text-align: right;
+    }
+
+    .prob-row .bar-wrap {
+      flex: 1;
+      height: 16px;
+      border-radius: 2px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .prob-row .bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: #374151;
+      transition: width 0.4s ease;
+    }
+
+    .prob-row .val {
+      width: 48px;
+      color: #6b7280;
+      font-size: 0.7rem;
+    }
+
+    .sparse-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    .sparse-table td,
+    .sparse-table th {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 5px 10px;
+      text-align: left;
+    }
+
+    .sparse-table th {
+      color: #6b7280;
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .sparse-table td:nth-child(3),
+    .sparse-table td:nth-child(4) { text-align: right; }
+    .sparse-table td:nth-child(3) { color: #93c5fd; }
+
+    .heat-bar {
+      display: inline-block;
+      height: 8px;
+      border-radius: 1px;
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .fact-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #d1d5db;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+
+    .fact-row.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fact-row .token {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #e5e7eb;
+      padding: 4px 10px;
+    }
+
+    .fact-row .subject { border-color: rgba(37, 99, 255, 0.5); color: #93c5fd; }
+    .fact-row .predicate { border-color: rgba(139, 92, 246, 0.5); color: #c4b5fd; }
+    .fact-row .object { border-color: rgba(34, 197, 94, 0.4); color: #86efac; }
+    .fact-row .arrow { color: #4b5563; }
+
+    [data-tip] {
+      position: relative;
+      border-bottom: 1px dashed var(--cold);
+      cursor: help;
+    }
+
+    [data-tip]:hover::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      z-index: 10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      background: #1a1a1a;
+      color: #e5e7eb;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 6px 10px;
+      pointer-events: none;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 600px) {
+      .interactive { padding: 20px; }
+      table.matrix { font-size: 0.62rem; }
+      .matrix td { min-width: 44px; padding: 4px 5px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <article>
+      <header>
+        <a class="backlink" href="../">Back to writing</a>
+        <h1>How LLMs <span>store facts</span><br>in a matrix of floats</h1>
+        <p class="dek">An interactive walk from bigram tables to transformer attention</p>
+      </header>
+
+      <section>
+        <p>There is a question underneath a lot of confusion about language models: <em>where does the knowledge actually live?</em> Not philosophically - physically. Which bytes, in what structure, encode that Paris is the capital of France?</p>
+
+        <p>The answer is surprising. There is no lookup table, no key-value store, no Wikipedia article cached anywhere. The fact is a <strong>weight</strong> - a float that is slightly higher than its neighbors inside a giant matrix. The best way to understand this is to build the smallest possible version from scratch and watch it happen.</p>
+
+        <h2>The bigram matrix</h2>
+
+        <p>A <span data-tip="counts co-occurrence of adjacent tokens in training text">bigram model</span> is the XOR of language modeling: the smallest case that demonstrates the essential mechanism. Context goes in, prediction comes out. One matrix multiply.</p>
+
+        <p>It has a vocabulary of tokens. The model is a single matrix <code>W</code> of shape <code>vocab x vocab</code>. Row <em>i</em> holds the logits for "what comes after token <em>i</em>." That is the entire model.</p>
+
+        <p>Let's train one on a dozen facts about four countries - and watch the matrix learn them.</p>
+      </section>
+
+      <section>
+        <h2>Train it live</h2>
+
+        <div class="interactive" id="train-block">
+          <div class="interactive-label" id="precompute-label">Computing 800 training steps...</div>
+
+          <div id="scrubber-ui" style="display:none; margin-top:4px;">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px;">
+              <button class="btn btn-secondary" id="btn-play" style="padding:8px 14px; min-width:40px;">▶</button>
+              <div style="flex:1;">
+                <input type="range" id="step-scrubber" min="0" max="799" value="0" step="1" style="width:100%; accent-color:var(--accent); cursor:pointer;">
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:12px;">
+              <div class="loss-display" id="loss-display" style="height:auto;">Step 0 / 800</div>
+              <div style="font-family:var(--mono); font-size:0.68rem; color:#4b5563;">drag or press ▶</div>
+            </div>
+            <div id="bigram-ticker" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-height:32px; padding:8px 0 4px; border-top:1px solid rgba(255,255,255,0.06); font-family:var(--mono); font-size:0.78rem;"></div>
+          </div>
+
+          <div class="progress-bar" id="precompute-bar" style="margin-top:12px;">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+
+          <div style="border-top:1px solid rgba(255,255,255,0.07); margin-top:20px; padding-top:18px;">
+            <div class="interactive-label" style="margin-bottom:12px;">Weight matrix - hover a row to see predictions</div>
+            <div class="matrix-wrap" id="matrix-wrap"></div>
+            <p class="loss-display" id="matrix-note" style="margin-top:12px; height:auto;">Weights initialized to zero - drag the scrubber.</p>
+          </div>
+
+          <div id="facts-section" style="display:none; border-top:1px solid rgba(255,255,255,0.07); margin-top:20px; padding-top:16px;">
+            <div class="interactive-label" style="margin-bottom:12px;">Learned facts</div>
+            <div id="facts-display" style="display:grid; gap:8px;"></div>
+          </div>
+        </div>
+
+        <p>Everything before <code>is</code> is clean. Then look at the <code>is</code> row - it splits across many possible objects. The model has no idea which city, currency, or language goes with which country. That binding is lost in transit.</p>
+      </section>
+
+      <section>
+        <h2>The binding loss, demonstrated</h2>
+
+        <div class="interactive">
+          <div class="interactive-label">Query the model</div>
+          <div class="mini-scrubber"></div>
+          <div class="query-section">
+            <div class="query-input-row">
+              <span>Complete:</span>
+              <select id="q-subject">
+                <option value="france">france</option>
+                <option value="england">england</option>
+                <option value="germany">germany</option>
+                <option value="japan">japan</option>
+              </select>
+              <select id="q-predicate">
+                <option value="capital">capital</option>
+                <option value="currency">currency</option>
+                <option value="language">language</option>
+              </select>
+              <span>-> ?</span>
+            </div>
+            <div class="query-result" id="query-result">
+              <p style="color:#4b5563; font-style:italic;">Scrub to train, then query.</p>
+            </div>
+          </div>
+        </div>
+
+        <p>The model stores <strong><span id="dense-byte-count">vocab x vocab x 4</span> bytes</strong> of float32 weights for these twelve facts across four countries. The actual informational content - twelve (subject, predicate, object) triples - is about <strong>144 bytes</strong> as a sparse structure.</p>
+      </section>
+
+      <section>
+        <h2>What's actually stored</h2>
+
+        <div class="interactive">
+          <div class="interactive-label">Hot cells - where the knowledge lives</div>
+          <div class="mini-scrubber"></div>
+          <div id="sparse-view" style="margin-top:16px;">
+            <p style="color:#4b5563; font-size:0.82rem; font-family:var(--mono);">Scrub to train.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Why attention exists</h2>
+
+        <p>The bigram's failure is precise: when the model is at token <code>is</code>, it cannot see <code>france</code> two positions back. The binding is lost in transit.</p>
+
+        <p>A transformer's attention mechanism is the direct solution to this. At every position, it computes a weighted average over <em>all</em> previous tokens - so when generating the token after <code>is</code>, the model can look back and see that <code>france</code> appeared earlier. The Q/K/V lookup is:</p>
+
+        <div class="aside">
+          <strong>Q</strong> (query): "I'm at <code>is</code> - what am I looking for?"<br>
+          <strong>K</strong> (key): "What does <code>france</code> offer? Country-ness."<br>
+          <strong>V</strong> (value): "Given that it is france, attend to: paris / franc / french."
+        </div>
+
+        <p>The bigram failure is the <em>motivation</em> for attention, made concrete. Every architectural innovation from RNNs to transformers is answering the same question this matrix cannot: how do I encode richer context than one token?</p>
+
+        <h2>The fact as geometry</h2>
+
+        <p>In a real language model, the "france -> paris" fact is not a single cell. It is a <strong>direction in embedding space</strong> - a vector offset that encodes "capital city of" as a relationship. The famous example: <code>king - man + woman ~= queen</code>.</p>
+
+        <p>Meng et al. (ROME, 2022) located the specific weights responsible for facts like "Eiffel Tower -> Paris" in GPT-J and <em>surgically edited</em> them to say "Eiffel Tower -> Rome." The fact-as-float, made literal at scale.</p>
+
+        <p class="footnote">Further reading: <a href="https://arxiv.org/abs/2202.05262">ROME: Locating and Editing Factual Associations in GPT</a> - Meng et al. 2022 · <a href="https://github.com/karpathy/makemore">makemore</a> - Karpathy's bigram-to-transformer walkthrough</p>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    const FACTS = [
+      ["the", "capital", "of", "france", "is", "paris"],
+      ["paris", "is", "the", "capital", "of", "france"],
+      ["the", "capital", "of", "france", "is", "paris"],
+      ["the", "currency", "of", "france", "is", "franc"],
+      ["the", "language", "of", "france", "is", "french"],
+      ["the", "capital", "of", "england", "is", "london"],
+      ["london", "is", "the", "capital", "of", "england"],
+      ["the", "currency", "of", "england", "is", "pound"],
+      ["the", "language", "of", "england", "is", "english"],
+      ["the", "capital", "of", "germany", "is", "berlin"],
+      ["berlin", "is", "the", "capital", "of", "germany"],
+      ["the", "currency", "of", "germany", "is", "mark"],
+      ["the", "language", "of", "germany", "is", "german"],
+      ["the", "capital", "of", "japan", "is", "tokyo"],
+      ["tokyo", "is", "the", "capital", "of", "japan"],
+      ["the", "currency", "of", "japan", "is", "yen"],
+      ["the", "language", "of", "japan", "is", "japanese"]
+    ];
+
+    const VOCAB = [...new Set(FACTS.flat())].sort();
+    const stoi = Object.fromEntries(VOCAB.map((word, i) => [word, i]));
+    const V = VOCAB.length;
+
+    const FACT_LABELS = [
+      [{ t: "france", c: "subject" }, { t: "capital", c: "predicate" }, { t: "paris", c: "object" }],
+      [{ t: "france", c: "subject" }, { t: "currency", c: "predicate" }, { t: "franc", c: "object" }],
+      [{ t: "france", c: "subject" }, { t: "language", c: "predicate" }, { t: "french", c: "object" }],
+      [{ t: "england", c: "subject" }, { t: "capital", c: "predicate" }, { t: "london", c: "object" }],
+      [{ t: "england", c: "subject" }, { t: "currency", c: "predicate" }, { t: "pound", c: "object" }],
+      [{ t: "england", c: "subject" }, { t: "language", c: "predicate" }, { t: "english", c: "object" }],
+      [{ t: "germany", c: "subject" }, { t: "capital", c: "predicate" }, { t: "berlin", c: "object" }],
+      [{ t: "germany", c: "subject" }, { t: "currency", c: "predicate" }, { t: "mark", c: "object" }],
+      [{ t: "germany", c: "subject" }, { t: "language", c: "predicate" }, { t: "german", c: "object" }],
+      [{ t: "japan", c: "subject" }, { t: "capital", c: "predicate" }, { t: "tokyo", c: "object" }],
+      [{ t: "japan", c: "subject" }, { t: "currency", c: "predicate" }, { t: "yen", c: "object" }],
+      [{ t: "japan", c: "subject" }, { t: "language", c: "predicate" }, { t: "japanese", c: "object" }]
+    ];
+
+    const KNOWN_FACTS = {
+      france: { capital: "paris", currency: "franc", language: "french" },
+      england: { capital: "london", currency: "pound", language: "english" },
+      germany: { capital: "berlin", currency: "mark", language: "german" },
+      japan: { capital: "tokyo", currency: "yen", language: "japanese" }
+    };
+
+    const ALL_OBJECTS = ["paris", "london", "berlin", "tokyo", "franc", "pound", "mark", "yen", "french", "english", "german", "japanese"];
+    const SHOW_ROWS = ["the", "capital", "currency", "language", "of", "france", "england", "germany", "japan", "is"];
+    const bigrams = [];
+    for (const sentence of FACTS) {
+      for (let i = 0; i < sentence.length - 1; i++) bigrams.push([stoi[sentence[i]], stoi[sentence[i + 1]]]);
+    }
+
+    const STEPS = 800;
+    const LR = 0.05;
+    const snapshots = [];
+    const losses = [];
+    const activeBigram = [];
+    let currentStep = 0;
+    let playTimer = null;
+    let playing = false;
+
+    document.getElementById("dense-byte-count").textContent = `${V * V * 4}`;
+
+    function softmaxW(W, ri) {
+      let max = -Infinity;
+      for (let j = 0; j < V; j++) if (W[ri * V + j] > max) max = W[ri * V + j];
+      let sum = 0;
+      const out = new Float32Array(V);
+      for (let j = 0; j < V; j++) {
+        out[j] = Math.exp(W[ri * V + j] - max);
+        sum += out[j];
+      }
+      for (let j = 0; j < V; j++) out[j] /= sum;
+      return out;
+    }
+
+    function lossOf(W) {
+      let loss = 0;
+      for (const [a, b] of bigrams) {
+        const p = softmaxW(W, a);
+        loss += -Math.log(p[b] + 1e-9);
+      }
+      return loss;
+    }
+
+    async function precompute() {
+      const W = new Float32Array(V * V);
+      const chunk = 25;
+      for (let step = 0; step < STEPS; step++) {
+        snapshots.push(new Float32Array(W));
+        losses.push(lossOf(W));
+        const [from, to] = bigrams[step % bigrams.length];
+        activeBigram.push({ from: VOCAB[from], to: VOCAB[to] });
+
+        const dW = new Float32Array(V * V);
+        for (const [a, b] of bigrams) {
+          const p = softmaxW(W, a);
+          for (let j = 0; j < V; j++) dW[a * V + j] += p[j] - (j === b ? 1 : 0);
+        }
+        for (let k = 0; k < V * V; k++) W[k] -= LR * dW[k];
+
+        if (step % chunk === chunk - 1) {
+          document.getElementById("progress-fill").style.width = `${((step + 1) / STEPS) * 100}%`;
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+      }
+
+      snapshots.push(new Float32Array(W));
+      losses.push(lossOf(W));
+      activeBigram.push(null);
+      document.getElementById("precompute-bar").style.display = "none";
+      document.getElementById("scrubber-ui").style.display = "block";
+      document.getElementById("precompute-label").textContent = "Training scrubber - drag to replay";
+      document.getElementById("step-scrubber").max = STEPS;
+      buildMatrixDOM();
+      buildMiniScrubbers();
+      goToStep(0);
+    }
+
+    function buildMatrixDOM() {
+      const wrap = document.getElementById("matrix-wrap");
+      let html = '<table class="matrix"><thead><tr><th></th>';
+      for (const word of VOCAB) html += `<th>${word}</th>`;
+      html += "</tr></thead><tbody>";
+      for (const rowWord of SHOW_ROWS) {
+        const ri = stoi[rowWord];
+        html += `<tr id="mrow-${rowWord}"><th class="row-header">${rowWord}</th>`;
+        for (let ci = 0; ci < V; ci++) html += `<td class="cell-cold" id="mc-${ri}-${ci}">0.00</td>`;
+        html += "</tr>";
+      }
+      html += "</tbody></table>";
+      wrap.innerHTML = html;
+      SHOW_ROWS.forEach(rowWord => {
+        const row = document.getElementById(`mrow-${rowWord}`);
+        row.addEventListener("mouseenter", () => highlightRow(rowWord));
+        row.addEventListener("mouseleave", clearHighlight);
+      });
+    }
+
+    function highlightRow(rowWord) {
+      if (currentStep === 0) return;
+      const W = snapshots[currentStep];
+      const probs = softmaxW(W, stoi[rowWord]);
+      document.querySelectorAll(`#mrow-${rowWord} td`).forEach((td, ci) => {
+        if (probs[ci] > 0.15) td.classList.add("cell-highlight");
+      });
+    }
+
+    function clearHighlight() {
+      document.querySelectorAll("td.cell-highlight").forEach(td => td.classList.remove("cell-highlight"));
+    }
+
+    function goToStep(step) {
+      currentStep = step;
+      const W = snapshots[step];
+      const loss = losses[step];
+      const lossEl = document.getElementById("loss-display");
+      lossEl.textContent = `Step ${step} / ${STEPS} · loss: ${loss.toFixed(3)}`;
+      lossEl.className = `loss-display${step === STEPS ? " good" : ""}`;
+
+      document.getElementById("matrix-note").textContent =
+        step === 0 ? "Drag the scrubber to watch weights emerge." :
+        step === STEPS ? "Fully trained. Hover a row to see predictions." :
+        "Weights forming - keep scrubbing.";
+
+      const isRow = stoi.is;
+      for (const rowWord of SHOW_ROWS) {
+        const ri = stoi[rowWord];
+        const probs = softmaxW(W, ri);
+        for (let ci = 0; ci < V; ci++) {
+          const td = document.getElementById(`mc-${ri}-${ci}`);
+          if (!td) continue;
+          const value = W[ri * V + ci];
+          td.textContent = value.toFixed(2);
+          const isWarn = ri === isRow && probs[ci] > 0.08 && ALL_OBJECTS.includes(VOCAB[ci]);
+          const isHot = !isWarn && Math.abs(value) > 1.5;
+          td.className = isWarn ? "cell-warn" : isHot ? "cell-hot" : "cell-cold";
+        }
+      }
+
+      updateMiniScrubberLabels(step);
+      renderSparse(W);
+      updateQueryResult(W);
+      renderTicker(activeBigram[step]);
+      updateLearnedFacts(W);
+    }
+
+    function renderSparse(W) {
+      const el = document.getElementById("sparse-view");
+      if (currentStep === 0) {
+        el.innerHTML = '<p style="color:#4b5563; font-size:0.82rem; font-family:var(--mono);">Scrub through training to inspect weights.</p>';
+        return;
+      }
+      const hotCells = [];
+      for (let i = 0; i < V; i++) {
+        for (let j = 0; j < V; j++) {
+          const value = W[i * V + j];
+          if (Math.abs(value) > 1.0) hotCells.push({ from: VOCAB[i], to: VOCAB[j], w: value });
+        }
+      }
+      hotCells.sort((a, b) => Math.abs(b.w) - Math.abs(a.w));
+      const maxW = Math.max(...hotCells.map(cell => Math.abs(cell.w)), 1);
+      const denseBytes = V * V * 4;
+      const sparseBytes = 12 * 3 * 4;
+      let html = `<div style="display:flex; gap:24px; flex-wrap:wrap; margin-bottom:16px;">
+        <div><div style="font-family:var(--mono); font-size:0.65rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Dense storage</div>
+        <div style="font-family:var(--mono); font-size:1.4rem; color:#e5e7eb;">${denseBytes} <span style="font-size:0.8rem; color:#6b7280;">bytes</span></div></div>
+        <div><div style="font-family:var(--mono); font-size:0.65rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Hot cells (|w| > 1.0)</div>
+        <div style="font-family:var(--mono); font-size:1.4rem; color:#93c5fd;">${hotCells.length} <span style="font-size:0.8rem; color:#6b7280;">/ ${V * V}</span></div></div>
+        <div><div style="font-family:var(--mono); font-size:0.65rem; color:#6b7280; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:4px;">Sparse triples</div>
+        <div style="font-family:var(--mono); font-size:1.4rem; color:#86efac;">${sparseBytes} <span style="font-size:0.8rem; color:#6b7280;">bytes</span></div></div>
+      </div>`;
+
+      html += '<table class="sparse-table"><thead><tr><th>from</th><th>to</th><th>weight</th><th>signal</th></tr></thead><tbody>';
+      hotCells.slice(0, 40).forEach(({ from, to, w }) => {
+        const pct = Math.round((Math.abs(w) / maxW) * 100);
+        const color = from === "is" ? "#ef4444" : "#2563ff";
+        html += `<tr><td style="color:#9ca3af;">${from}</td><td style="color:#e5e7eb;">${to}</td><td>${w.toFixed(2)}</td><td><span class="heat-bar" style="width:${pct}px; background:${color};"></span></td></tr>`;
+      });
+      html += '</tbody></table><div style="margin-top:10px; color:#4b5563; font-family:var(--mono); font-size:0.72rem;"><span style="color:#fca5a5;">Red bars</span> = <code style="background:rgba(255,255,255,0.08);">is</code> row - binding loss.</div>';
+      el.innerHTML = html;
+    }
+
+    function updateQueryResult(W) {
+      const subject = document.getElementById("q-subject").value;
+      const predicate = document.getElementById("q-predicate").value;
+      const el = document.getElementById("query-result");
+      if (currentStep === 0) {
+        el.innerHTML = '<p style="color:#4b5563; font-style:italic;">Scrub to train, then query.</p>';
+        return;
+      }
+      const isProbs = softmaxW(W, stoi.is);
+      const correct = KNOWN_FACTS[subject][predicate];
+      const ranked = ALL_OBJECTS
+        .map(object => ({ object, p: isProbs[stoi[object]] }))
+        .sort((a, b) => b.p - a.p);
+
+      let html = `<div class="prob-label">P( ? | "the ${predicate} of ${subject} is ___" )</div>
+        <div style="margin-bottom:10px; color:#4b5563; font-size:0.72rem;">Model sees only <code style="background:rgba(255,255,255,0.08);">is</code> - country context lost.</div>`;
+      ranked.forEach(({ object, p }) => {
+        const isCorrect = object === correct;
+        html += `<div class="prob-row">
+          <div class="word" style="color:${isCorrect ? "#86efac" : "#9ca3af"}; ${isCorrect ? "font-weight:600;" : ""}">${object}</div>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(p * 100)}%; background:${isCorrect ? "#16a34a" : "#374151"};"></div></div>
+          <div class="val">${(p * 100).toFixed(1)}%${isCorrect ? " ✓" : ""}</div>
+        </div>`;
+      });
+      html += `<div style="margin-top:10px; color:#6b7280; font-size:0.72rem;">Correct: <span style="color:#86efac;">${correct}</span>${ranked[0].object === correct ? " - model gets it right at this step" : " - model still confused"}</div>`;
+      el.innerHTML = html;
+    }
+
+    function renderTicker(pair) {
+      const el = document.getElementById("bigram-ticker");
+      if (!pair) {
+        el.innerHTML = "";
+        return;
+      }
+      const { from, to } = pair;
+      const dim = "display:inline-block;padding:3px 10px;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#4b5563;font-family:var(--mono);font-size:0.78rem;";
+      const hot = "display:inline-block;padding:3px 10px;border-radius:3px;border:1px solid rgba(37,99,255,0.8);background:rgba(37,99,255,0.18);color:#93c5fd;font-family:var(--mono);font-size:0.78rem;font-weight:600;";
+      const arr = "color:#2563ff;margin:0 4px;font-family:var(--mono);";
+      const darr = "color:#374151;margin:0 4px;font-family:var(--mono);";
+      let sentTokens = null;
+      let hotStart = -1;
+      for (const sentence of FACTS) {
+        for (let i = 0; i < sentence.length - 1; i++) {
+          if (sentence[i] === from && sentence[i + 1] === to) {
+            sentTokens = sentence;
+            hotStart = i;
+            break;
+          }
+        }
+        if (sentTokens) break;
+      }
+      if (!sentTokens) {
+        el.innerHTML = "";
+        return;
+      }
+      let html = '<span style="font-size:0.65rem;color:#4b5563;text-transform:uppercase;letter-spacing:0.08em;margin-right:10px;font-family:var(--mono);">sample</span>';
+      sentTokens.forEach((token, i) => {
+        const isHot = i === hotStart || i === hotStart + 1;
+        html += `<span style="${isHot ? hot : dim}">${token}</span>`;
+        if (i < sentTokens.length - 1) html += `<span style="${i === hotStart ? arr : darr}">-></span>`;
+      });
+      el.innerHTML = html;
+    }
+
+    function renderFacts() {
+      document.getElementById("facts-display").innerHTML = FACT_LABELS.map((fact, i) => {
+        const tokens = fact.map(({ t, c }) => `<span class="token ${c}">${t}</span>`).join('<span class="arrow">-></span>');
+        return `<div class="fact-row" id="fact-row-${i}">${tokens}</div>`;
+      }).join("");
+    }
+
+    const FACT_FINALS = FACT_LABELS.map(fact => {
+      const obj = fact.find(item => item.c === "object").t;
+      return [stoi.is, stoi[obj]];
+    });
+
+    function updateLearnedFacts(W) {
+      const section = document.getElementById("facts-section");
+      const anyRevealed = FACT_FINALS.some(([a, b]) => W[a * V + b] > 0.3);
+      section.style.display = anyRevealed ? "block" : "none";
+      if (!anyRevealed) return;
+      FACT_FINALS.forEach(([a, b], i) => {
+        const row = document.getElementById(`fact-row-${i}`);
+        if (W[a * V + b] > 0.3) row.classList.add("revealed");
+        else row.classList.remove("revealed");
+      });
+    }
+
+    function buildMiniScrubbers() {
+      document.querySelectorAll(".mini-scrubber").forEach((el, i) => {
+        el.innerHTML = `<div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+          <input type="range" id="mini-scrubber-${i}" min="0" max="${STEPS}" value="0" step="1" style="flex:1; accent-color:var(--accent); cursor:pointer;">
+          <span id="mini-scrubber-${i}-label" style="font-family:var(--mono); font-size:0.68rem; color:#4b5563; white-space:nowrap;">step 0</span>
+        </div>`;
+        document.getElementById(`mini-scrubber-${i}`).addEventListener("input", event => {
+          stopPlayback();
+          syncAllTo(Number(event.target.value));
+        });
+      });
+    }
+
+    function updateMiniScrubberLabels(step) {
+      document.querySelectorAll('.mini-scrubber input[type="range"]').forEach((input, i) => {
+        input.value = step;
+        const label = document.getElementById(`mini-scrubber-${i}-label`);
+        if (label) label.textContent = `step ${step}`;
+      });
+    }
+
+    function syncAllTo(step) {
+      document.getElementById("step-scrubber").value = step;
+      goToStep(step);
+    }
+
+    function stopPlayback() {
+      if (playing) {
+        clearInterval(playTimer);
+        playing = false;
+        document.getElementById("btn-play").textContent = "▶";
+      }
+    }
+
+    function togglePlay() {
+      if (playing) {
+        stopPlayback();
+        return;
+      }
+      if (currentStep >= STEPS) syncAllTo(0);
+      playing = true;
+      document.getElementById("btn-play").textContent = "⏸";
+      playTimer = setInterval(() => {
+        const next = currentStep + 1;
+        if (next > STEPS) {
+          stopPlayback();
+          return;
+        }
+        syncAllTo(next);
+      }, 30);
+    }
+
+    renderFacts();
+    precompute();
+    document.getElementById("step-scrubber").addEventListener("input", event => {
+      stopPlayback();
+      syncAllTo(Number(event.target.value));
+    });
+    document.getElementById("btn-play").addEventListener("click", togglePlay);
+    document.getElementById("q-subject").addEventListener("change", () => updateQueryResult(snapshots[currentStep]));
+    document.getElementById("q-predicate").addEventListener("change", () => updateQueryResult(snapshots[currentStep]));
+  </script>
+</body>
+</html>
