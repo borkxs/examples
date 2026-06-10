@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Seven Modes - A Field Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --paper: #fafaf7;
+      --ink: #1a1a18;
+      --ink-muted: #5c5c56;
+      --ink-faint: #a8a89e;
+      --rule: #e2dece;
+      --accent: #c8462a;
+      --accent-faint: #f5eae7;
+      --flat-bg: #fbf0ed;
+      --flat-text: #9b2e18;
+      --sharp-bg: #eaf1fb;
+      --sharp-text: #1b4e8c;
+      --root-bg: #1a1a18;
+      --root-text: #f0ede3;
+      --natural-bg: #f0ede3;
+      --natural-text: #5c5c56;
+      --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+      --mono: "JetBrains Mono", "Courier New", monospace;
+      --body: Georgia, "Times New Roman", serif;
+    }
+
+    html {
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 18px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 6rem 2rem 10rem;
+      font-family: var(--body);
+      line-height: 1.75;
+    }
+
+    a { color: var(--accent); }
+
+    .backlink,
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .backlink {
+      display: inline-flex;
+      margin-bottom: 1.5rem;
+      color: var(--ink-faint);
+      text-decoration: none;
+    }
+
+    .backlink:hover { color: var(--accent); }
+
+    .eyebrow {
+      color: var(--ink-faint);
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: clamp(2.4rem, 9vw, 3.2rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    h1 em {
+      color: var(--accent);
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin-bottom: 3rem;
+      color: var(--ink-muted);
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    h2 {
+      margin: 3.5rem 0 1rem;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    h3 {
+      margin: 2rem 0 0.75rem;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    p { margin-bottom: 1.25rem; }
+    p + p { text-indent: 1.5em; }
+    p + p.no-indent,
+    .mode-detail p,
+    .footnote { text-indent: 0; }
+
+    .mono {
+      font-family: var(--mono);
+      font-size: 0.85em;
+    }
+
+    .lede {
+      margin-bottom: 1.5rem;
+      color: var(--ink);
+      font-size: 1.1rem;
+      line-height: 1.85;
+    }
+
+    .section-rule {
+      border: 0;
+      border-top: 1px solid var(--rule);
+      margin: 4rem 0;
+    }
+
+    .aside {
+      border-left: 2px solid var(--rule);
+      margin: 2rem 0;
+      padding: 0.75rem 1.25rem;
+      color: var(--ink-muted);
+      font-size: 0.9rem;
+      font-style: italic;
+      line-height: 1.65;
+    }
+
+    .flat-sym,
+    .flat-mark { color: var(--flat-text); }
+    .sharp-sym,
+    .sharp-mark { color: var(--sharp-text); }
+
+    .note-cell {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: background 0.12s, color 0.12s, transform 0.12s;
+    }
+
+    .nc-root { background: var(--root-bg); color: var(--root-text); }
+    .nc-flat { background: var(--flat-bg); color: var(--flat-text); }
+    .nc-sharp { background: var(--sharp-bg); color: var(--sharp-text); }
+    .nc-nat { background: var(--natural-bg); color: var(--natural-text); }
+    .note-lit { background: var(--accent) !important; color: #fff !important; transform: scale(1.12); }
+
+    .mode-table-wrap,
+    .chord-table-wrap {
+      margin: 2.5rem 0;
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.82rem;
+    }
+
+    th {
+      border-bottom: 1px solid var(--rule);
+      padding: 0 6px 10px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-align: center;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    th:first-child,
+    td:first-child { text-align: left; padding-left: 0; }
+
+    tbody tr {
+      border-bottom: 1px solid var(--rule);
+      transition: background 0.12s;
+    }
+
+    tbody tr:last-child { border-bottom: 0; }
+    tbody tr:hover,
+    tbody tr.selected,
+    tbody tr.playing-row { background: #f3f0e6; }
+
+    td {
+      padding: 9px 6px;
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .mode-name {
+      display: block;
+      color: var(--ink);
+      font-family: var(--serif);
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .mode-title {
+      display: inline-flex;
+      flex-direction: column;
+      line-height: 1.05;
+      vertical-align: middle;
+    }
+
+    .mode-aka {
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+
+    .play-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      margin-right: 6px;
+      border: 1px solid var(--rule);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      vertical-align: middle;
+    }
+
+    .play-btn:hover { background: #ede9dc; border-color: #c8c4b4; }
+    .play-btn.playing { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .mode-detail {
+      display: none;
+      border-top: 1px solid var(--rule);
+      padding: 1rem 0 1.5rem;
+    }
+
+    .mode-detail.open { display: block; }
+    .mode-detail p { margin: 0; color: var(--ink-muted); font-size: 0.9rem; }
+
+    .chord-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 0.75rem;
+    }
+
+    .chip {
+      border-radius: 99px;
+      padding: 3px 9px;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.03em;
+    }
+
+    .chip-maj { background: var(--sharp-bg); color: var(--sharp-text); }
+    .chip-min { background: var(--flat-bg); color: var(--flat-text); }
+    .chip-dom { background: #fef6e4; color: #7a4c09; }
+    .chip-dim { background: var(--natural-bg); color: var(--ink-muted); }
+    .chip-label { color: var(--ink-faint); font-family: var(--mono); font-size: 0.65rem; }
+
+    .reorder-diagram,
+    .cof-wrap {
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      margin: 2.5rem 0;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--rule);
+      padding: 10px 16px;
+      background: #f5f2e8;
+    }
+
+    .panel-hint {
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+    }
+
+    .panel-hint.done { color: var(--ink-muted); }
+
+    .panel-btn {
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      padding: 5px 14px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .panel-btn:hover { background: #ede9dc; border-color: #c8c4b4; }
+    .panel-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .reorder-table-wrap { overflow-x: auto; padding: 0 16px; }
+    .reorder-table .td-name { text-align: left; }
+    .reorder-table .td-flats {
+      color: var(--ink-muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+    .reorder-table .td-char {
+      color: var(--ink-muted);
+      font-size: 0.75rem;
+      font-style: italic;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .deg-cell span {
+      cursor: default;
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .root-mark {
+      color: var(--ink-faint);
+      font-size: 0.7rem !important;
+    }
+    .nat-mark { color: #ccc9bc; }
+
+    .reorder-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 1px solid var(--rule);
+      padding: 10px 16px;
+      background: #f5f2e8;
+      opacity: 0;
+      transition: opacity 0.35s;
+    }
+
+    .legend-item {
+      color: var(--ink-muted);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.05em;
+    }
+
+    .builder-wrap {
+      margin: 2.5rem 0;
+      border-radius: 6px;
+      background: var(--natural-bg);
+      padding: 1.5rem;
+    }
+
+    .builder-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .ctrl-group label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    select {
+      appearance: none;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      padding: 6px 28px 6px 10px;
+    }
+
+    .builder-scale {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .builder-scale-note {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .builder-deg {
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+    }
+
+    .builder-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 1px solid var(--rule);
+      margin-top: 0.25rem;
+      padding-top: 1rem;
+      color: var(--ink-muted);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+    }
+
+    .builder-meta strong { color: var(--ink); font-weight: 500; }
+
+    .tt-mark {
+      color: var(--accent);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+
+    .cof-svg-wrap {
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      padding: 1.25rem 1rem 0.5rem;
+    }
+
+    .cof-caption {
+      min-height: 24px;
+      padding: 6px 16px 12px;
+      color: var(--ink-faint);
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+
+    .footnote {
+      border-top: 1px solid var(--rule);
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      color: var(--ink-faint);
+      font-size: 0.82rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 3rem 1rem 6rem; }
+      .panel-header { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <a class="backlink" href="../">Back to writing</a>
+  <p class="eyebrow">Music Theory - Modes of the Major Scale</p>
+
+  <h1>The Seven <em>Modes</em></h1>
+  <p class="subtitle">A field guide to why they sound the way they do - and why key signature alone cannot tell you that.</p>
+
+  <p class="lede">Key signature is not specific enough. That is the whole problem modes solve, and the whole reason the subject feels cryptic until it suddenly does not.</p>
+
+  <p>Seven scales. Same notes. Same key signature on the staff. Yet they sound completely different. A minor scale and a Dorian scale built on the same root share six of their seven notes and would be notated identically in many contexts - but one sounds like Santana and the other sounds like Bach. The map is not the territory, and the staff is not the sound.</p>
+
+  <p>What we are really after is a way to describe the <em>sound</em> - specifically, how each mode's particular arrangement of intervals produces a distinct emotional character. The shorthand is: measure each mode against the major scale, and note what is flatted.</p>
+
+  <hr class="section-rule">
+
+  <h2>1. Starting from C major</h2>
+
+  <p>The modes of the major scale are what you get if you generalize the idea of a relative minor to cover all seven notes. A minor is C major's relative minor - same notes, different starting point. There are five more starting points we have not named yet.</p>
+
+  <p>Starting on each successive note of C major while keeping all the same pitches produces seven distinct scales. Click a row to inspect it, or press the play button to hear the ascending scale.</p>
+
+  <div class="mode-table-wrap">
+    <table class="mode-table" id="modes-table">
+      <thead>
+        <tr>
+          <th style="min-width: 130px;">Mode</th>
+          <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th>
+          <th>Character</th>
+        </tr>
+      </thead>
+      <tbody id="modes-tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="mode-detail-panel" class="mode-detail"></div>
+
+  <p class="no-indent">Seeing them side by side makes the key-signature problem concrete. All seven would be written with no sharps or flats on a staff. The notation is identical. The sound is not.</p>
+
+  <hr class="section-rule">
+
+  <h2>2. Measuring deviation from major</h2>
+
+  <p>To compare modes systematically, measure each one against its own major scale - not against C major, but against the major scale starting on the same root. D Dorian vs. D major. E Phrygian vs. E major. This normalizes the comparison.</p>
+
+  <p>D major has two sharps: F♯ and C♯. D Dorian, built from C major's notes, has neither. Those missing sharps become flatted scale degrees: the 3rd (F) and the 7th (C). <strong>Flat the 3rd and 7th of any major scale and you get Dorian.</strong></p>
+
+  <div class="aside">This is not specific to D. Flat the 3rd and 7th of G major and you get G Dorian. Flat the 3rd and 7th of B♭ major and you get B♭ Dorian. The relationship is universal - which is why it is useful.</div>
+
+  <p>Listed out, the seven modes have these deviations from their respective major scales. The pattern is hard to see from this ordering - Lydian's sharp and Locrian's five flats do not obviously belong to the same system.</p>
+
+  <div class="reorder-diagram">
+    <div class="panel-header">
+      <div class="panel-hint" id="reorder-hint">Reorder by circle of fourths -></div>
+      <button class="panel-btn" id="reorder-btn" type="button">reorder</button>
+    </div>
+
+    <div class="reorder-table-wrap">
+      <table class="reorder-table">
+        <thead>
+          <tr>
+            <th>Mode</th>
+            <th class="th-deg">1</th><th class="th-deg">2</th><th class="th-deg">3</th><th class="th-deg">4</th>
+            <th class="th-deg">5</th><th class="th-deg">6</th><th class="th-deg">7</th>
+            <th>+/-</th>
+            <th>Character</th>
+          </tr>
+        </thead>
+        <tbody id="reorder-tbody"></tbody>
+      </table>
+    </div>
+
+    <div class="reorder-legend" id="reorder-legend">
+      <span class="legend-item"><span class="flat-sym">♭</span> = flatted vs. that root's major scale</span>
+      <span class="legend-item"><span class="sharp-sym">♯</span> = sharped</span>
+      <span class="legend-item">- = root</span>
+    </div>
+  </div>
+
+  <p class="no-indent">The pattern down each column: once a flat appears, it stays. The 7th goes first, then the 3rd, then the 6th - the sequence <span class="mono">7-3-6-2-5</span>. Each step is one flat, one degree of darkness.</p>
+
+  <hr class="section-rule">
+
+  <h2>3. Why this sequence matters</h2>
+
+  <p>That sequence - <span class="mono">7-3-6-2-5</span> - contains the jazz subsequences you already know: <span class="mono">2-5-1</span> and <span class="mono">3-6-2-5-1</span>. It is not a coincidence. The circle of fourths is the geometry of cadential tension.</p>
+
+  <p>The circle below shows all 12 major keys arranged by fifths. The toggle unrolls it - the same motion the reorder table above performs on the seven diatonic modes specifically: collapsing circular distance into a flat axis of darkness.</p>
+
+  <div class="cof-wrap">
+    <div class="panel-header">
+      <div class="panel-hint" id="cof-hint">Circle of fifths - each step clockwise = one sharp</div>
+      <button class="panel-btn" id="cof-btn" type="button">flatten</button>
+    </div>
+    <div class="cof-svg-wrap">
+      <svg id="cof-svg" width="480" height="280" viewBox="0 0 480 280" style="max-width: 100%; overflow: visible;" role="img" aria-label="Interactive circle of fifths"></svg>
+    </div>
+    <div class="cof-caption" id="cof-caption">clockwise = more sharps · counter-clockwise = more flats</div>
+  </div>
+
+  <div class="aside">Cadences resolve in the <em>opposite</em> direction - the circle of fifths, toward fewer flats, from tension to resolution. Lydian is so resolved it sits below the root - past rest, into something sweetly ungrounded.</div>
+
+  <p>The other thing this view surfaces: the 7th is the most commonly flatted interval because it is the first to go. This is why the 3rd and 7th are called the guide tones - they do the most work of communicating chord quality.</p>
+
+  <hr class="section-rule">
+
+  <h2>4. Stacking thirds: triads, sevenths, and extensions</h2>
+
+  <p>A triad is three notes. A seventh chord is four. Beyond those four chord tones, any remaining note of the scale is a suspension - named by its interval from the root: 9th, 11th, 13th. Four chord tones plus three suspensions accounts for all seven notes.</p>
+
+  <p>Across all seven modes, there are only <strong>three types of triads</strong>: major, minor, and diminished. The triad alone cannot distinguish between the three major modes or the three minor modes. You need at least a seventh chord to start hearing the differences.</p>
+
+  <div class="chord-table-wrap">
+    <table class="chord-table">
+      <thead>
+        <tr>
+          <th>Mode</th>
+          <th>Triad</th>
+          <th>TT</th>
+          <th>7th chord</th>
+          <th>TT</th>
+          <th>Signature extension</th>
+        </tr>
+      </thead>
+      <tbody id="chord-tbody"></tbody>
+    </table>
+  </div>
+
+  <p class="no-indent">The tritone (TT) column marks where an augmented fourth appears. Diminished is the only triad with one; dominant seventh introduces one between the major 3rd and flat 7th, which is why the V chord resolves so strongly.</p>
+
+  <hr class="section-rule">
+
+  <h2>5. Build any scale</h2>
+
+  <p>Choose a root and mode. The colored cells show where this scale deviates from that root's major scale - <span style="color: var(--flat-text);">red = flatted</span>, <span style="color: var(--sharp-text);">blue = sharped</span> relative to major.</p>
+
+  <div class="builder-wrap">
+    <div class="builder-controls">
+      <div class="ctrl-group">
+        <label for="root-sel">Root</label>
+        <select id="root-sel">
+          <option>C</option><option>C♯/D♭</option><option>D</option><option>D♯/E♭</option>
+          <option>E</option><option>F</option><option>F♯/G♭</option><option>G</option>
+          <option>G♯/A♭</option><option>A</option><option>A♯/B♭</option><option>B</option>
+        </select>
+      </div>
+      <div class="ctrl-group">
+        <label for="mode-sel">Mode</label>
+        <select id="mode-sel">
+          <option>Ionian</option>
+          <option>Dorian</option>
+          <option>Phrygian</option>
+          <option>Lydian</option>
+          <option>Mixolydian</option>
+          <option>Aeolian</option>
+          <option>Locrian</option>
+        </select>
+      </div>
+    </div>
+    <div class="builder-scale" id="builder-scale"></div>
+    <div class="builder-meta" id="builder-meta"></div>
+  </div>
+
+  <hr class="section-rule">
+
+  <h2>Mnemonic</h2>
+
+  <p>The traditional mnemonic for the mode names in scale order is <strong>I Don't Play Like A Little Liar</strong> - Ionian, Dorian, Phrygian, Lydian, Mixolydian, Aeolian, Locrian. It is fine for memorizing the names. It is useless for the sounds.</p>
+
+  <p>The circle-of-fourths ordering is more durable because it encodes the <em>structure</em>: Lydian, Ionian, Mixolydian, Dorian, Aeolian, Phrygian, Locrian. Each step is one flat, one step toward darkness.</p>
+
+  <p class="footnote">The 1 is by definition never flatted or sharped in a diatonic mode - it is the starting reference point. The 4 is also never flatted in the standard modes: Lydian sharps it; the others leave it natural.</p>
+
+  <script>
+    const MODES = [
+      { name: "Ionian", aka: "major", deviations: [], sharps: [], flats: 0, triad: "maj", seventh: "maj7", sound: "Literally major", sigExt: "11 can clash with the 3rd", desc: "The major scale itself. All other modes are deviations from this. Bright, stable, resolved." },
+      { name: "Dorian", aka: null, deviations: [3, 7], sharps: [], flats: 2, triad: "min", seventh: "min7", sound: "Mostly minor", sigExt: "♮6 - the 13th", desc: "Natural minor with a raised 6th. Common in jazz and soul. If it sounds minor but alive, it is probably Dorian." },
+      { name: "Phrygian", aka: null, deviations: [2, 3, 6, 7], sharps: [], flats: 4, triad: "min", seventh: "min7", sound: "Very minor", sigExt: "♭2 - Spanish / metal", desc: "Minor with a flat 2nd. Dark, Spanish, metallic. The flat 2 is the whole personality of the mode." },
+      { name: "Lydian", aka: null, deviations: [], sharps: [4], flats: -1, triad: "maj", seventh: "maj7", sound: "Very major", sigExt: "♯4 - floating", desc: "Major with a raised 4th. The dreamiest, most floating mode. The sharp 4 is the note; everything else is major." },
+      { name: "Mixolydian", aka: "dominant", deviations: [7], sharps: [], flats: 1, triad: "maj", seventh: "dom7", sound: "Mostly major", sigExt: "♭7 - dominant pull", desc: "Major with a flat 7th. It is the V chord extended into a scale. Blues, rock, and funk live here." },
+      { name: "Aeolian", aka: "minor", deviations: [3, 6, 7], sharps: [], flats: 3, triad: "min", seventh: "min7", sound: "Minor", sigExt: "plain minor baseline", desc: "Natural minor. Relative to Dorian, the flat 6 makes it sound darker and more settled." },
+      { name: "Locrian", aka: null, deviations: [2, 3, 5, 6, 7], sharps: [], flats: 5, triad: "dim", seventh: "ø7", sound: "Extremely minor", sigExt: "♭5 - unstable root", desc: "Five deviations from major. Rarely used as a tonal center because the flat 5 destabilizes the root too severely." }
+    ];
+
+    const C_MAJOR = ["C", "D", "E", "F", "G", "A", "B"];
+    const CHROMATIC = ["C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B"];
+    const ROOT_TO_INDEX = { "C": 0, "C♯/D♭": 1, "D": 2, "D♯/E♭": 3, "E": 4, "F": 5, "F♯/G♭": 6, "G": 7, "G♯/A♭": 8, "A": 9, "A♯/B♭": 10, "B": 11 };
+    const MODE_INTERVALS = {
+      Ionian: [2, 2, 1, 2, 2, 2, 1],
+      Dorian: [2, 1, 2, 2, 2, 1, 2],
+      Phrygian: [1, 2, 2, 2, 1, 2, 2],
+      Lydian: [2, 2, 2, 1, 2, 2, 1],
+      Mixolydian: [2, 2, 1, 2, 2, 1, 2],
+      Aeolian: [2, 1, 2, 2, 1, 2, 2],
+      Locrian: [1, 2, 2, 1, 2, 2, 2]
+    };
+
+    const ROW_ORDER_DEFAULT = ["Ionian", "Dorian", "Phrygian", "Lydian", "Mixolydian", "Aeolian", "Locrian"];
+    const ROW_ORDER_CIRCLE = ["Locrian", "Phrygian", "Aeolian", "Dorian", "Mixolydian", "Ionian", "Lydian"];
+    const DEG_ORDER_DEFAULT = [1, 2, 3, 4, 5, 6, 7];
+    const DEG_ORDER_CIRCLE = [7, 3, 6, 2, 5, 1, 4];
+    let selectedMode = null;
+    let reordered = false;
+    let audioContext = null;
+    let playbackToken = 0;
+
+    function modeByName(name) {
+      return MODES.find(mode => mode.name === name);
+    }
+
+    function chipClass(q) {
+      if (q === "maj" || q === "maj7") return "chip-maj";
+      if (q === "min" || q === "min7" || q === "ø7") return "chip-min";
+      if (q === "dom7") return "chip-dom";
+      return "chip-dim";
+    }
+
+    function soundTextColor(flats) {
+      if (flats <= -1) return "#1b4e8c";
+      if (flats === 0) return "#185fa5";
+      if (flats <= 2) return "#7a4c09";
+      if (flats === 3) return "#2d6e1a";
+      if (flats === 4) return "#8c3060";
+      return "#9b2e18";
+    }
+
+    function modeCell(mode, degree, label, id) {
+      const isRoot = degree === 1;
+      const isFlat = mode.deviations.includes(degree);
+      const isSharp = mode.sharps.includes(degree);
+      const type = isRoot ? "root" : isFlat ? "flat" : isSharp ? "sharp" : "nat";
+      const text = isRoot ? label : isFlat ? "♭" : isSharp ? "♯" : label;
+      return `<span class="note-cell nc-${type}" id="${id}">${text}</span>`;
+    }
+
+    function renderModes() {
+      const tbody = document.getElementById("modes-tbody");
+      tbody.innerHTML = MODES.map((mode, mi) => {
+        const notes = C_MAJOR.slice(mi).concat(C_MAJOR.slice(0, mi));
+        const cells = notes.map((note, di) => `<td>${modeCell(mode, di + 1, note, `nc-${mi}-${di}`)}</td>`).join("");
+        const aka = mode.aka ? `<span class="mode-aka">${mode.aka}</span>` : "";
+        return `<tr data-mode="${mi}">
+          <td><button class="play-btn" type="button" aria-label="Play ${mode.name} scale" data-play="${mi}">▶</button><span class="mode-title"><span class="mode-name">${mode.name}</span>${aka}</span></td>
+          ${cells}
+          <td style="color:${soundTextColor(mode.flats)};font-size:0.78rem;font-style:italic;white-space:nowrap;">${mode.sound}</td>
+        </tr>`;
+      }).join("");
+
+      tbody.querySelectorAll("tr").forEach(row => row.addEventListener("click", () => toggleModeDetail(Number(row.dataset.mode))));
+      tbody.querySelectorAll(".play-btn").forEach(btn => btn.addEventListener("click", event => {
+        event.stopPropagation();
+        playScale(Number(btn.dataset.play));
+      }));
+    }
+
+    function toggleModeDetail(mi) {
+      const panel = document.getElementById("mode-detail-panel");
+      const rows = document.querySelectorAll("#modes-tbody tr");
+      if (selectedMode === mi) {
+        selectedMode = null;
+        panel.className = "mode-detail";
+        panel.innerHTML = "";
+        rows.forEach(row => row.classList.remove("selected"));
+        return;
+      }
+
+      selectedMode = mi;
+      rows.forEach(row => row.classList.remove("selected"));
+      rows[mi].classList.add("selected");
+      const mode = MODES[mi];
+      const devs = mode.deviations.length ? mode.deviations.map(d => `<span class="flat-sym">♭${d}</span>`).join(" ") : mode.sharps.length ? `<span class="sharp-sym">♯${mode.sharps[0]}</span>` : "none";
+      panel.className = "mode-detail open";
+      panel.innerHTML = `<p>${mode.desc}</p>
+        <div class="chord-row">
+          <span class="chip-label">Triad:</span><span class="chip ${chipClass(mode.triad)}">${mode.triad}</span>
+          <span class="chip-label">7th:</span><span class="chip ${chipClass(mode.seventh)}">${mode.seventh}</span>
+          <span class="chip-label">Deviations from major:</span><span class="mono">${devs}</span>
+        </div>`;
+    }
+
+    function renderReorderTable() {
+      const rowOrder = reordered ? ROW_ORDER_CIRCLE : ROW_ORDER_DEFAULT;
+      const degOrder = reordered ? DEG_ORDER_CIRCLE : DEG_ORDER_DEFAULT;
+      document.querySelectorAll(".reorder-table .th-deg").forEach((th, i) => { th.textContent = degOrder[i]; });
+      document.getElementById("reorder-tbody").innerHTML = rowOrder.map(name => {
+        const mode = modeByName(name);
+        const cells = degOrder.map(degree => {
+          const isFlat = mode.deviations.includes(degree);
+          const isSharp = mode.sharps.includes(degree);
+          const mark = isFlat ? "♭" : isSharp ? "♯" : degree === 1 && reordered ? "-" : "♮";
+          const cls = isFlat ? "flat-mark" : isSharp ? "sharp-mark" : degree === 1 && reordered ? "root-mark" : "nat-mark";
+          return `<td class="deg-cell"><span class="${cls}" title="${name} degree ${degree}">${mark}</span></td>`;
+        }).join("");
+        const flatsDisplay = mode.flats === 0 ? "0" : mode.flats > 0 ? `+${mode.flats}` : String(mode.flats);
+        const aka = mode.aka ? `<span class="mode-aka"> · ${mode.aka}</span>` : "";
+        return `<tr><td class="td-name"><span class="mode-name" style="font-size:0.88rem;">${name}</span>${aka}</td>${cells}<td class="td-flats">${flatsDisplay}</td><td class="td-char" style="color:${soundTextColor(mode.flats)};">${mode.sound}</td></tr>`;
+      }).join("");
+    }
+
+    function toggleReorder() {
+      reordered = !reordered;
+      const btn = document.getElementById("reorder-btn");
+      const hint = document.getElementById("reorder-hint");
+      const legend = document.getElementById("reorder-legend");
+      btn.classList.toggle("active", reordered);
+      btn.textContent = reordered ? "reset" : "reorder";
+      hint.textContent = reordered ? "ordered by circle of fourths · each step = one more flat" : "Reorder by circle of fourths ->";
+      hint.classList.toggle("done", reordered);
+      legend.style.opacity = reordered ? "1" : "0";
+      renderReorderTable();
+    }
+
+    function renderChords() {
+      const rows = [
+        { name: "Locrian", triad: "dim", ttT: true, seventh: "ø7", tt7: true, ext: "♭5 - almost never a tonal center" },
+        { name: "Phrygian", triad: "min", ttT: false, seventh: "min7", tt7: false, ext: "♭2 - Spanish / metal signature" },
+        { name: "Aeolian", triad: "min", ttT: false, seventh: "min7", tt7: false, ext: "♭6 - darker than Dorian" },
+        { name: "Dorian", triad: "min", ttT: false, seventh: "min7", tt7: false, ext: "♮6 - alive, jazzier than Aeolian" },
+        { name: "Mixolydian", triad: "maj", ttT: false, seventh: "dom7", tt7: true, ext: "♭7 - the V chord as a scale" },
+        { name: "Ionian", triad: "maj", ttT: false, seventh: "maj7", tt7: false, ext: "♮4 on 11th can clash with 3rd" },
+        { name: "Lydian", triad: "maj", ttT: false, seventh: "maj7", tt7: false, ext: "♯4 - floating" }
+      ];
+      document.getElementById("chord-tbody").innerHTML = rows.map(row => `<tr>
+        <td style="font-family:var(--serif);font-size:0.9rem;font-weight:700;">${row.name}</td>
+        <td><span class="chip ${chipClass(row.triad)}">${row.triad}</span></td>
+        <td>${row.ttT ? '<span class="tt-mark">x</span>' : ""}</td>
+        <td><span class="chip ${chipClass(row.seventh)}">${row.seventh}</span></td>
+        <td>${row.tt7 ? '<span class="tt-mark">x</span>' : ""}</td>
+        <td>${row.ext}</td>
+      </tr>`).join("");
+    }
+
+    function updateBuilder() {
+      const rootLabel = document.getElementById("root-sel").value;
+      const modeName = document.getElementById("mode-sel").value;
+      const rootIndex = ROOT_TO_INDEX[rootLabel] || 0;
+      const intervals = MODE_INTERVALS[modeName];
+      const majorIntervals = MODE_INTERVALS.Ionian;
+      const scaleNotes = [CHROMATIC[rootIndex]];
+      const majorNotes = [CHROMATIC[rootIndex]];
+      let scalePos = rootIndex;
+      let majorPos = rootIndex;
+      for (let i = 0; i < 6; i++) {
+        scalePos = (scalePos + intervals[i]) % 12;
+        majorPos = (majorPos + majorIntervals[i]) % 12;
+        scaleNotes.push(CHROMATIC[scalePos]);
+        majorNotes.push(CHROMATIC[majorPos]);
+      }
+
+      document.getElementById("builder-scale").innerHTML = scaleNotes.map((note, i) => {
+        const diff = (CHROMATIC.indexOf(note) - CHROMATIC.indexOf(majorNotes[i]) + 12) % 12;
+        const isFlat = diff === 11;
+        const isSharp = diff === 1;
+        const type = i === 0 ? "root" : isFlat ? "flat" : isSharp ? "sharp" : "nat";
+        const degree = i === 0 ? "1" : isFlat ? `♭${i + 1}` : isSharp ? `♯${i + 1}` : String(i + 1);
+        return `<div class="builder-scale-note"><div class="note-cell nc-${type}" style="width:36px;height:36px;font-size:0.8rem;">${note}</div><span class="builder-deg">${degree}</span></div>`;
+      }).join("");
+
+      const mode = modeByName(modeName);
+      const devs = mode.deviations.length ? mode.deviations.map(d => `♭${d}`).join(" ") : mode.sharps.length ? `♯${mode.sharps[0]}` : "none";
+      document.getElementById("builder-meta").innerHTML = `
+        <span><strong>${mode.triad}</strong> triad</span>
+        <span><strong>${mode.seventh}</strong> seventh</span>
+        <span>Flats vs. major: <strong>${mode.flats < 0 ? "0 (+1♯)" : mode.flats}</strong></span>
+        <span>Deviations: <strong>${devs}</strong></span>
+      `;
+    }
+
+    function renderCof(flattened) {
+      const svg = document.getElementById("cof-svg");
+      const keys = ["C", "G", "D", "A", "E", "B", "F♯/G♭", "D♭", "A♭", "E♭", "B♭", "F"];
+      const minors = ["a", "e", "b", "f♯", "c♯", "g♯", "d♯/e♭", "b♭", "f", "c", "g", "d"];
+      const acc = [0, 1, 2, 3, 4, 5, 6, -5, -4, -3, -2, -1];
+      const flatOrder = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6];
+      const width = 480;
+      const cx = 240;
+      const cy = 136;
+      const r = 96;
+      svg.setAttribute("height", flattened ? "122" : "280");
+      svg.setAttribute("viewBox", `0 0 480 ${flattened ? 122 : 280}`);
+      svg.innerHTML = "";
+
+      const order = flattened ? flatOrder : keys.map((_, i) => i);
+      order.forEach((keyIndex, orderIndex) => {
+        const color = acc[keyIndex] < 0 ? "#fbf0ed" : acc[keyIndex] > 0 ? "#eaf1fb" : "#f5f2e8";
+        if (flattened) {
+          const x = 16 + orderIndex * ((width - 32) / 12);
+          const w = (width - 32) / 12 - 3;
+          svg.insertAdjacentHTML("beforeend", `<rect x="${x}" y="28" width="${w}" height="50" rx="3" fill="${color}" stroke="#d0ccbc" stroke-width="0.7"></rect>
+            <text x="${x + w / 2}" y="55" text-anchor="middle" dominant-baseline="central" font-family="Playfair Display, Georgia, serif" font-size="11" font-weight="700" fill="#2a2a28">${keys[keyIndex]}</text>
+            <text x="${x + w / 2}" y="17" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="${acc[keyIndex] < 0 ? "#9b2e18" : acc[keyIndex] > 0 ? "#1b4e8c" : "#b0aca0"}">${acc[keyIndex] === 0 ? "0" : acc[keyIndex] > 0 ? `+${acc[keyIndex]}` : acc[keyIndex]}</text>`);
+        } else {
+          const angle = (keyIndex * 30 - 90) * Math.PI / 180;
+          const x = cx + r * Math.cos(angle);
+          const y = cy + r * Math.sin(angle);
+          const mx = cx + 48 * Math.cos(angle);
+          const my = cy + 48 * Math.sin(angle);
+          svg.insertAdjacentHTML("beforeend", `<circle cx="${x}" cy="${y}" r="24" fill="${color}" stroke="#d0ccbc" stroke-width="0.7"></circle>
+            <text x="${x}" y="${y - 3}" text-anchor="middle" dominant-baseline="central" font-family="Playfair Display, Georgia, serif" font-size="12" font-weight="700" fill="#2a2a28">${keys[keyIndex]}</text>
+            <text x="${mx}" y="${my}" text-anchor="middle" dominant-baseline="central" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a8a80">${minors[keyIndex]}</text>`);
+        }
+      });
+    }
+
+    function toggleCof() {
+      const btn = document.getElementById("cof-btn");
+      const hint = document.getElementById("cof-hint");
+      const caption = document.getElementById("cof-caption");
+      const flattened = btn.classList.toggle("active");
+      btn.textContent = flattened ? "circle" : "flatten";
+      hint.textContent = flattened ? "flattened - most flats to most sharps" : "Circle of fifths - each step clockwise = one sharp";
+      hint.classList.toggle("done", flattened);
+      caption.textContent = flattened ? "most flats · D♭ A♭ E♭ B♭ F | C | G D A E B F♯ · most sharps" : "clockwise = more sharps · counter-clockwise = more flats";
+      renderCof(flattened);
+    }
+
+    function frequency(noteName) {
+      const match = noteName.match(/^([A-G])(#?)(\d)$/);
+      const semis = { C: -9, D: -7, E: -5, F: -4, G: -2, A: 0, B: 2 };
+      const [, letter, sharp, octave] = match;
+      const midiOffset = semis[letter] + (sharp ? 1 : 0) + (Number(octave) - 4) * 12;
+      return 440 * Math.pow(2, midiOffset / 12);
+    }
+
+    function modeScaleNotes(mi) {
+      const starts = ["C4", "D4", "E4", "F4", "G4", "A3", "B3"];
+      const root = starts[mi];
+      const mode = MODES[mi].name;
+      const rootIndex = CHROMATIC.indexOf(root.slice(0, -1).replace("#", "♯"));
+      const octave = Number(root.slice(-1));
+      const notes = [root];
+      let pos = rootIndex;
+      let oct = octave;
+      MODE_INTERVALS[mode].forEach(step => {
+        pos += step;
+        if (pos >= 12) {
+          pos -= 12;
+          oct += 1;
+        }
+        notes.push(CHROMATIC[pos].replace("♯", "#") + oct);
+      });
+      return notes;
+    }
+
+    function playTone(freq, start, duration) {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.type = "triangle";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(0.14, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain).connect(audioContext.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.03);
+    }
+
+    function playScale(mi) {
+      playbackToken += 1;
+      const token = playbackToken;
+      if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      audioContext.resume();
+      document.querySelectorAll(".play-btn").forEach(btn => btn.classList.remove("playing"));
+      document.querySelectorAll("#modes-tbody tr").forEach(row => row.classList.remove("playing-row"));
+      document.querySelectorAll(".note-cell").forEach(cell => cell.classList.remove("note-lit"));
+      const btn = document.querySelector(`[data-play="${mi}"]`);
+      const row = document.querySelector(`#modes-tbody tr[data-mode="${mi}"]`);
+      btn.classList.add("playing");
+      row.classList.add("playing-row");
+
+      const notes = modeScaleNotes(mi);
+      const now = audioContext.currentTime + 0.02;
+      notes.forEach((note, i) => {
+        playTone(frequency(note), now + i * 0.26, 0.22);
+        setTimeout(() => {
+          if (token !== playbackToken) return;
+          const cell = document.getElementById(`nc-${mi}-${Math.min(i, 6)}`);
+          if (cell) {
+            cell.classList.add("note-lit");
+            setTimeout(() => cell.classList.remove("note-lit"), 190);
+          }
+        }, i * 260);
+      });
+      setTimeout(() => {
+        if (token !== playbackToken) return;
+        btn.classList.remove("playing");
+        row.classList.remove("playing-row");
+      }, notes.length * 260 + 160);
+    }
+
+    renderModes();
+    renderReorderTable();
+    renderChords();
+    updateBuilder();
+    renderCof(false);
+    document.getElementById("reorder-btn").addEventListener("click", toggleReorder);
+    document.getElementById("cof-btn").addEventListener("click", toggleCof);
+    document.getElementById("root-sel").addEventListener("change", updateBuilder);
+    document.getElementById("mode-sel").addEventListener("change", updateBuilder);
+  </script>
+</body>
+</html>
